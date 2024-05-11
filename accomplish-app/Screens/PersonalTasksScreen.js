@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import { AntDesign, Entypo } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const TodoItem = ({ title, completed, onPress, onDelete }) => (
   <View style={styles.todoItem}>
@@ -14,11 +16,50 @@ const TodoItem = ({ title, completed, onPress, onDelete }) => (
   </View>
 );
 
+const ListItem = ({ name, onPress, onDelete }) => (
+  <TouchableOpacity style={styles.listItem} onPress={onPress}>
+    <View style={styles.listIcon}>
+      <Entypo name="list" size={20} color="black" />
+    </View>
+    <Text>{name}</Text>
+    <TouchableOpacity onPress={onDelete}>
+      <Entypo name="cross" size={24} color="red" />
+    </TouchableOpacity>
+  </TouchableOpacity>
+);
+
 const PersonalTasksScreen = () => {
   const [lists, setLists] = useState([]);
   const [selectedListIndex, setSelectedListIndex] = useState(null);
   const [newTodo, setNewTodo] = useState('');
   const [newListName, setNewListName] = useState('');
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  useEffect(() => {
+    saveData();
+  }, [lists]);
+
+  const saveData = async () => {
+    try {
+      await AsyncStorage.setItem('lists', JSON.stringify(lists));
+    } catch (error) {
+      console.error('Error saving data:', error);
+    }
+  };
+
+  const loadData = async () => {
+    try {
+      const savedLists = await AsyncStorage.getItem('lists');
+      if (savedLists !== null) {
+        setLists(JSON.parse(savedLists));
+      }
+    } catch (error) {
+      console.error('Error loading data:', error);
+    }
+  };
 
   const toggleTodo = (listIndex, todoIndex) => {
     setLists((prevLists) =>
@@ -41,6 +82,11 @@ const PersonalTasksScreen = () => {
         i === listIndex ? { ...list, todos: list.todos.filter((todo, j) => j !== todoIndex) } : list
       )
     );
+  };
+
+  const deleteList = (listIndex) => {
+    setLists((prevLists) => prevLists.filter((list, i) => i !== listIndex));
+    setSelectedListIndex(null);
   };
 
   const renderTodo = ({ item: { title, completed }, index }) => (
@@ -77,22 +123,22 @@ const PersonalTasksScreen = () => {
     }
   };
 
+  const toggleSelectedList = (index) => {
+    setSelectedListIndex((prevIndex) => (prevIndex === index ? null : index));
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>To do Lists</Text>
+      <Text style={styles.title}>Personal Lists</Text>
       <FlatList
         style={{ top: 35 }}
         data={lists}
         renderItem={({ item, index }) => (
-          <TouchableOpacity
-            onPress={() => setSelectedListIndex(index)}
-            style={[
-              styles.listItem,
-              index === selectedListIndex && { backgroundColor: '#d3d3d3' },
-            ]}
-          >
-            <Text>{item.name}</Text>
-          </TouchableOpacity>
+          <ListItem
+            name={item.name}
+            onPress={() => toggleSelectedList(index)}
+            onDelete={() => deleteList(index)}
+          />
         )}
         keyExtractor={(item, index) => index.toString()}
       />
@@ -191,9 +237,15 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   listItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
+  },
+  listIcon: {
+    marginRight: 10,
   },
 });
 
