@@ -46,7 +46,7 @@ export default function App() {
         }}
       />
        <Tab.Screen
-          name="TeamScreen"
+          name="Team"
           component={TeamTasksScreen}
           options={{
             tabBarIcon: ({ color, size }) => (
@@ -55,7 +55,7 @@ export default function App() {
           }}
         />
         <Tab.Screen
-          name="PublicTimeLine"
+          name="Community"
           component={PublicTimeLineScreen}
           options={{
             tabBarIcon: ({ color, size }) => (
@@ -67,7 +67,7 @@ export default function App() {
         />
        
         <Tab.Screen
-          name="PersonalScreen"
+          name="Personal"
           component={PersonalTasksScreen}
           options={{
             tabBarIcon: ({ color, size }) => (
@@ -76,7 +76,7 @@ export default function App() {
           }}
         />
         <Tab.Screen
-          name="ProfilePage"
+          name="Profile"
           component={ProfilePageScreen}
           options={{
             tabBarIcon: ({ color, size }) => (
