@@ -1,82 +1,180 @@
-import React from 'react';
-import { StyleSheet, View, Text, Image } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, View, Text, Image, TouchableOpacity, FlatList, Modal } from 'react-native';
+import { SimpleLineIcons } from '@expo/vector-icons';
 
 export default function ProfileScreen() {
+  const [isFollowed, setIsFollowed] = useState(false);
+  const [followersCount, setFollowersCount] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedPost, setSelectedPost] = useState(null);
+
+  const toggleFollow = () => {
+    setIsFollowed(!isFollowed);
+    if (isFollowed) {
+      setFollowersCount(prevCount => prevCount - 1);
+    } else {
+      setFollowersCount(prevCount => prevCount + 1);
+    }
+  };
+
+  const posts = [
+    { id: '1', title: 'Post 1', content: 'This is the content of post 1.' },
+    { id: '2', title: 'Post 2', content: 'This is the content of post 2.' },
+    { id: '3', title: 'Post 3', content: 'This is the content of post 3.' },
+    // Add more posts as needed
+  ];
+
+  const renderItem = ({ item }) => (
+    <TouchableOpacity onPress={() => { setSelectedPost(item); setModalVisible(true); }}>
+      <View style={styles.postItem}>
+        <Text style={styles.postTitle}>{item.title}</Text>
+      </View>
+    </TouchableOpacity>
+  );
+
   return (
     <View style={styles.container}>
-      <View style={styles.profileContainer}>
-        <View style={styles.profileInfo}>
-          <View style={styles.imageContainer}>
-            <Image
-              style={styles.profileImage}
-              source={require('../assets/5d709da8-cbe2-4ac7-a9f6-8f127662e86c.jpeg')}
+      <View style={styles.header}>
+        <View style={styles.followCounts}>
+          <Text style={styles.followText}>Following: {followingCount}</Text>
+          <Text style={styles.followText}>Followers: {followersCount}</Text>
+        </View>
+        <Image source={require('../assets/5d709da8-cbe2-4ac7-a9f6-8f127662e86c.jpeg')} style={styles.profilePicture} />
+        <View style={styles.FollowButton}>
+          <TouchableOpacity onPress={toggleFollow}>
+            <SimpleLineIcons
+              name={isFollowed ? "user-following" : "user-follow"}
+              size={24}
+              color={isFollowed ? "black" : "red"}
             />
-          </View>
-          <Text style={styles.name}>John Doe</Text>
-          <Text style={styles.email}>john.doe@example.com</Text>
-
-          <View style={styles.followContainer}>
-            <Text style={styles.followText}>Following: 100</Text>
-            <View style={styles.line} />
-            <Text style={styles.followText}>Followers: 200</Text>
+          </TouchableOpacity>
+        </View>
+        <Text style={styles.nameText}>Mohammed Abdulwahab</Text>
+        <Text style={styles.titleText}>Software Developer</Text>
+      </View>
+      <View style={styles.infoContainer}>
+        <Text style={styles.infoText}>Bio</Text>
+        <Text style={styles.bioText}>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+        </Text>
+      </View>
+      <FlatList
+        data={posts}
+        renderItem={renderItem}
+        keyExtractor={item => item.id}
+        style={styles.flatList}
+      />
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => { setModalVisible(false); }}>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>{selectedPost?.title}</Text>
+            <Text style={styles.modalText}>{selectedPost?.content}</Text>
+            <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeButton}>
+              <Text style={styles.closeButtonText}>Close</Text>
+            </TouchableOpacity>
           </View>
         </View>
-
-    
-      </View>
+      </Modal>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    top: 25,
     flex: 1,
-    backgroundColor: '#f0f8ff',
-  },
-  profileContainer: {
-    flexDirection: 'row',
-    paddingHorizontal: 20,
-    paddingTop: 50,
-  },
-  profileInfo: {
-    flex: 1,
-  },
-  imageContainer: {
-    marginBottom: 10,
-  },
-  profileImage: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-  },
-  name: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 5,
-  },
-  email: {
-    fontSize: 18,
-    color: '#666',
-    marginBottom: 20,
-  },
-  followContainer: {
-    flexDirection: 'row',
+    backgroundColor: '#F0F1F6',
     alignItems: 'center',
-    marginBottom: 20,
+  },
+  header: {
+    alignItems: 'center',
+    margin: 20,
+  },
+  followCounts: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '80%',
+    marginBottom: 10,
   },
   followText: {
     fontSize: 16,
-    marginRight: 20,
+    fontWeight: 'bold',
   },
-  line: {
-    height: '100%',
-    width: 1,
-    backgroundColor: 'black',
-    marginHorizontal: 10,
+  profilePicture: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
   },
-  flatListContainer: {
+  nameText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginTop: 10,
+  },
+  titleText: {
+    fontSize: 16,
+    color: '#888',
+  },
+  infoContainer: {
+    marginTop: 20,
+    padding: 20,
+    backgroundColor: '#fff',
+  },
+  infoText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  bioText: {
+    fontSize: 16,
+  },
+  flatList: {
+    width: '100%',
+  },
+  postItem: {
+    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+  postTitle: {
+    fontSize: 16,
+  },
+  modalContainer: {
     flex: 1,
-    marginLeft: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
-
+  modalContent: {
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  modalText: {
+    fontSize: 16,
+    marginBottom: 20,
+  },
+  closeButton: {
+    backgroundColor: '#ccc',
+    padding: 10,
+    borderRadius: 5,
+  },
+  closeButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  FollowButton: {
+    bottom: 8,
+    left: 35,
+  },
 });
