@@ -23,9 +23,9 @@ export default function PersonalTasksScreen() {
         {lists[listIndex].map((task, index) => (
           <Rect
             key={index}
-            x={index * 50} // adjust positioning as needed
+            x={index * 50} //adjust positioning as needed
             y={10}
-            width={parseInt(task.duration) * 10} // adjust scaling as needed
+            width={parseInt(task.duration) * 10} //adjust scaling as needed
             height={20}
             fill="blue"
           />
