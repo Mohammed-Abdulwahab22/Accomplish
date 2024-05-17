@@ -1,74 +1,326 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, TextInput, ScrollView } from 'react-native';
-import { Svg, Rect } from 'react-native-svg';
+import { StyleSheet, Text, TouchableOpacity, View, Modal, TextInput, ScrollView } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Ionicons, Entypo, MaterialIcons } from '@expo/vector-icons';
 
 export default function PersonalTasksScreen() {
   const [lists, setLists] = useState([]);
-  const [tasks, setTasks] = useState([]);
+  const [listName, setListName] = useState('');
+  const [addingListModal, setAddingListModal] = useState(false);
+
+  const [addingTasksModal, setAddingTasksModal] = useState(false);
+  const [selectedListIndex, setSelectedListIndex] = useState(null);
+  const [listTasks, setListTasks] = useState([]);
+  const [taskName, setTaskName] = useState('');
+
+
+
+
+  useEffect(() => {
+    loadLists();
+
+  }, [])
+
+  useEffect(() => {
+    saveLists();
+    console.log("lists", lists)
+
+  }, [lists])
+
+  const loadLists = async () => {
+    try {
+      const storedLists = await AsyncStorage.getItem('lists');
+      if (storedLists !== null) {
+        setLists(JSON.parse(storedLists));
+      }
+    } catch (error) {
+      console.error('Error loading lists:', error);
+    }
+  };
+
+  const saveLists = async () => {
+    try {
+      await AsyncStorage.setItem('lists', JSON.stringify(lists));
+    } catch (error) {
+      console.error('Error saving lists:', error);
+    }
+  };
+
+  const deleteList = (index) => {
+    const newList = lists.filter((_, i) => i !== index);
+    setLists(newList);
+  };
 
   const addList = () => {
-    setLists([...lists, []]);
+    if (listName.trim() !== '') {
+      setLists([...lists, { name: listName, tasks: [] }]);
+      setListName('');
+      closeAddListModal();
+    }
   };
 
-  const addTask = (listIndex, taskName, duration) => {
-    const newTask = { name: taskName, duration: duration };
-    const updatedLists = [...lists];
-    updatedLists[listIndex].push(newTask);
-    setLists(updatedLists);
+  const addTask = () => {
+    if (taskName.trim() !== '') {
+      const newList = [...lists];
+      newList[selectedListIndex].tasks.push(taskName);
+      setLists(newList);
+      setTaskName('');
+      // closeAddTasksModal();
+    }
   };
 
-  const renderGanttChart = (listIndex) => {
-    return (
-      <Svg width="100%" height="100">
-        {lists[listIndex].map((task, index) => (
-          <Rect
-            key={index}
-            x={index * 50} //adjust positioning as needed
-            y={10}
-            width={parseInt(task.duration) * 10} //adjust scaling as needed
-            height={20}
-            fill="blue"
-          />
-        ))}
-      </Svg>
-    );
+
+  const openAddListModal = () => {
+    setAddingListModal(true);
   };
+
+  const closeAddListModal = () => {
+    setAddingListModal(false);
+  };
+
+  const openAddTasksModal = (index) => {
+    setSelectedListIndex(index);
+    setAddingTasksModal(true);
+  };
+
+  const closeAddTasksModal = () => {
+    setAddingTasksModal(false);
+  };
+
+
+  const ListItem = ({ item, index }) => (
+    <TouchableOpacity style={[styles.card, { backgroundColor: getRandomColor() }]} onPress={() => openAddTasksModal(index)}>
+      <Text style={styles.cardText}>{item.name}</Text>
+      <TouchableOpacity onPress={() => deleteList(index)} style={styles.deleteButton}>
+        <Entypo name="trash" size={24} color="black" />
+      </TouchableOpacity>
+    </TouchableOpacity>
+  );
+
+
+  const getRandomColor = () => {
+    const colors = ['#ff6666', '#66ccff', '#99ff99', '#ffcc66', '#cc99ff', '#ff99cc', '#99ccff', '#ccff99'];
+    return colors[Math.floor(Math.random() * colors.length)];
+  };
+
 
   return (
-    <ScrollView style={styles.container}>
-      {lists.map((list, listIndex) => (
-        <View key={listIndex}>
-          <Text>List {listIndex + 1}</Text>
-          <TouchableOpacity onPress={() => addTask(listIndex, "New Task", "1")}>
-            <Text>Add Task</Text>
-          </TouchableOpacity>
-          <TextInput
-            placeholder="Task Name"
-            onChangeText={(text) => setTasks({ ...tasks, [listIndex]: { name: text, duration: tasks[listIndex]?.duration || "1" } })}
-          />
-          <TextInput
-            placeholder="Duration (in days)"
-            onChangeText={(text) => setTasks({ ...tasks, [listIndex]: { name: tasks[listIndex]?.name || "New Task", duration: text } })}
-          />
-          <View style={styles.ganttChartContainer}>{renderGanttChart(listIndex)}</View>
+    <View style={styles.container}>
+
+      <View style={{ top: '85%', zIndex: 1 }}>
+        <TouchableOpacity style={styles.addListsButton} onPress={openAddListModal}>
+          <Ionicons name="add-circle-sharp" size={50} color="darkblue" />
+        </TouchableOpacity>
+      </View>
+
+      <Modal visible={addingListModal} animationType="fade" transparent>
+        <View style={styles.AddingListModalContainer}>
+          <View style={styles.InsideAddingListModalContainer}>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter list name"
+              value={listName}
+              onChangeText={setListName}
+            />
+
+            <View style={styles.buttonsContainer}>
+
+              <TouchableOpacity onPress={closeAddListModal} style={styles.button}>
+                <MaterialIcons name="cancel" size={52} color="red" />
+              </TouchableOpacity>
+
+              <TouchableOpacity onPress={addList} style={styles.button}>
+                <Entypo name="add-to-list" size={50} color="lightgreen" />
+              </TouchableOpacity>
+
+
+            </View>
+
+          </View>
         </View>
-      ))}
-      <TouchableOpacity onPress={addList}>
-        <Text>Add List</Text>
-      </TouchableOpacity>
-    </ScrollView>
-  );
+      </Modal>
+
+      <Modal visible={addingTasksModal} animationType="fade">
+        <View style={styles.AddingTasksModalContainer}>
+          <View style={styles.InsideAddingTasksModalContainer}>
+            {/* Tasks */}
+            <ScrollView style={styles.tasksContainer}>
+              {lists[selectedListIndex]?.tasks.map((task, index) => (
+                <View key={index} style={styles.taskContainer}>
+                  <Ionicons name="checkbox-outline" size={24} color="black" style={styles.taskIcon} />
+                  <Text style={styles.task}>{task}</Text>
+                </View>
+              ))}
+            </ScrollView>
+
+            <TextInput
+              style={styles.inputTasks}
+              placeholder="Enter task name"
+              value={taskName}
+              onChangeText={setTaskName}
+            />
+
+            <View style={styles.buttonsContainerTasks}>
+              <TouchableOpacity onPress={closeAddTasksModal} style={styles.button}>
+                <Ionicons name="arrow-back" size={52} color="red" />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={addTask} style={styles.button}>
+                <Entypo name="add-to-list" size={50} color="lightgreen" />
+              </TouchableOpacity>
+            </View>
+
+
+          </View>
+        </View>
+      </Modal>
+
+      {/*Lists*/}
+      <ScrollView contentContainerStyle={styles.scrollViewContent} showsVerticalScrollIndicator={false}>
+        {lists.map((list, index) => (
+          <ListItem key={index} item={list} index={index} />
+        ))}
+      </ScrollView>
+
+
+
+    </View>
+  )
 }
 
 const styles = StyleSheet.create({
+
   container: {
     flex: 1,
-    marginTop: 50,
-    paddingHorizontal: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 10,
+    backgroundColor: "#E6F7FF"
   },
-  ganttChartContainer: {
-    marginTop: 10,
-    borderWidth: 1,
-    borderColor: 'gray',
+  addListsButton: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    backgroundColor: 'lightblue',
+    alignItems: 'center',
+    justifyContent: 'center',
+    bottom: '-42%',
+    right: '-40%',
+    zIndex: 1,
   },
-});
+  AddingListModalContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  AddingTasksModalContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+
+
+  },
+  InsideAddingTasksModalContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    top: '35%',
+    padding: 20,
+    width: '80%',
+  },
+  InsideAddingListModalContainer:{
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    top: '5%',
+    padding: 20,
+    width: '80%',
+  },
+  input: {
+    backgroundColor: '#f0f8ff',
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: '#3399ff',
+    padding: 10,
+    fontSize: 16,
+  },
+  buttonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '70%',
+    marginTop: 20,
+  },
+  inputTasks: {
+    backgroundColor: '#f0f8ff',
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: '#3399ff',
+    padding: 10,
+    fontSize: 16,
+    bottom: '22%',
+  },
+  buttonsContainerTasks: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '70%',
+    marginTop: 70,
+    bottom: '65%',
+  },
+
+  button: {
+    marginHorizontal: 10,
+
+  },
+  card: {
+    width: '80%',
+    aspectRatio: 4 / 3,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 10,
+    position: 'relative',
+
+  },
+  cardText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'black',
+  },
+  scrollViewContent: {
+    alignItems: 'flex-start',
+    paddingBottom: 0,
+    zIndex: -1
+
+  },
+  deleteButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+  },
+  tasksContainer: {
+    maxHeight: 200,
+    width: '120%',
+    marginTop: 20,
+    bottom: '25%',
+    backgroundColor: '#E3F9E5',
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: 'black',
+    padding: 2,
+    },
+  task: {
+    fontSize: 25,
+    marginVertical: 5,
+  },
+
+  taskContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  taskIcon: {
+    marginRight: 10,
+  },
+
+})
