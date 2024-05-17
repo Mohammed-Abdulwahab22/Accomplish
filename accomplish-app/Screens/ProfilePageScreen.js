@@ -31,7 +31,7 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f0f8ff',
+    backgroundColor: '#E6F7FF',
   },
   profileContainer: {
     flexDirection: 'row',
