@@ -1,7 +1,8 @@
 import { StyleSheet, Text, TouchableOpacity, View, Modal, TextInput, ScrollView } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Ionicons, Entypo, MaterialIcons } from '@expo/vector-icons';
+import { Ionicons, Entypo, MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
+import MyProgressCircle from '../Components/ProgressCircle';
 
 export default function PersonalTasksScreen() {
   const [lists, setLists] = useState([]);
@@ -10,7 +11,7 @@ export default function PersonalTasksScreen() {
 
   const [addingTasksModal, setAddingTasksModal] = useState(false);
   const [selectedListIndex, setSelectedListIndex] = useState(null);
-  const [listTasks, setListTasks] = useState([]);
+  // const [listTasks, setListTasks] = useState([]);
   const [taskName, setTaskName] = useState('');
 
 
@@ -62,13 +63,39 @@ export default function PersonalTasksScreen() {
   const addTask = () => {
     if (taskName.trim() !== '') {
       const newList = [...lists];
-      newList[selectedListIndex].tasks.push(taskName);
+      newList[selectedListIndex].tasks.push({ name: taskName, completed: false });
       setLists(newList);
       setTaskName('');
       // closeAddTasksModal();
     }
   };
 
+  const toggleTaskCompletion = (listIndex, taskIndex) => {
+    const newList = [...lists];
+    newList[listIndex].tasks[taskIndex].completed = !newList[listIndex].tasks[taskIndex].completed;
+    setLists(newList);
+  };
+
+  const calculateProgress = (list) => {
+    const totalTasks = list.tasks.length;
+    const completedTasks = list.tasks.filter(task => task.completed).length;
+    return totalTasks === 0 ? 0 : completedTasks / totalTasks;
+  };
+
+  const TaskItem = ({ task, listIndex, taskIndex }) => (
+    <TouchableOpacity
+      key={taskIndex}
+      style={[styles.taskContainer, task.completed ? styles.taskCompleted : null]}
+      onPress={() => toggleTaskCompletion(listIndex, taskIndex)}
+    >
+      {task.completed ? (
+        <MaterialCommunityIcons name="check-underline-circle" size={27} color="gold" />
+      ) : (
+        <MaterialCommunityIcons name="checkbox-blank-circle-outline" size={24} color="black" />
+      )}
+      <Text style={[styles.task, task.completed ? styles.taskTextCompleted : null]}>{task.name}</Text>
+    </TouchableOpacity>
+  );
 
   const openAddListModal = () => {
     setAddingListModal(true);
@@ -94,15 +121,15 @@ export default function PersonalTasksScreen() {
       <TouchableOpacity onPress={() => deleteList(index)} style={styles.deleteButton}>
         <Entypo name="trash" size={24} color="black" />
       </TouchableOpacity>
+        <MyProgressCircle progress={calculateProgress(item)} />
     </TouchableOpacity>
   );
 
 
   const getRandomColor = () => {
-    const colors = ['#ff6666', '#66ccff', '#99ff99', '#ffcc66', '#cc99ff', '#ff99cc', '#99ccff', '#ccff99'];
+    const colors = ['#FF5733', '#EEAB9D', '#33FF57', '#337CFF', '#D933FF', '#33FFE6', '#FF5733', '#57FF33'];
     return colors[Math.floor(Math.random() * colors.length)];
   };
-
 
   return (
     <View style={styles.container}>
@@ -146,10 +173,7 @@ export default function PersonalTasksScreen() {
             {/* Tasks */}
             <ScrollView style={styles.tasksContainer}>
               {lists[selectedListIndex]?.tasks.map((task, index) => (
-                <View key={index} style={styles.taskContainer}>
-                  <Ionicons name="checkbox-outline" size={24} color="black" style={styles.taskIcon} />
-                  <Text style={styles.task}>{task}</Text>
-                </View>
+                <TaskItem key={index} task={task} listIndex={selectedListIndex} taskIndex={index} />
               ))}
             </ScrollView>
 
@@ -169,7 +193,6 @@ export default function PersonalTasksScreen() {
               </TouchableOpacity>
             </View>
 
-
           </View>
         </View>
       </Modal>
@@ -188,7 +211,6 @@ export default function PersonalTasksScreen() {
 }
 
 const styles = StyleSheet.create({
-
   container: {
     flex: 1,
     alignItems: 'center',
@@ -230,7 +252,7 @@ const styles = StyleSheet.create({
     padding: 20,
     width: '80%',
   },
-  InsideAddingListModalContainer:{
+  InsideAddingListModalContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
@@ -309,7 +331,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: 'black',
     padding: 2,
-    },
+  },
   task: {
     fontSize: 25,
     marginVertical: 5,
@@ -322,5 +344,17 @@ const styles = StyleSheet.create({
   taskIcon: {
     marginRight: 10,
   },
-
+  taskCompleted: {
+    textDecorationLine: 'line-through',
+    // opacity: 0.5,
+  },
+  taskTextCompleted: {
+    textDecorationLine: 'line-through',
+  },
+  progressCircleContainer: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    zIndex: 1, 
+  },
 })
