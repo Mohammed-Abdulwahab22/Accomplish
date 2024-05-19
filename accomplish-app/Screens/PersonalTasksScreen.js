@@ -1,7 +1,7 @@
 import { StyleSheet, Text, TouchableOpacity, View, Modal, TextInput, ScrollView } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Ionicons, Entypo, MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons, Entypo, MaterialIcons, MaterialCommunityIcons, FontAwesome5 } from '@expo/vector-icons';
 import MyProgressCircle from '../Components/ProgressCircle';
 
 export default function PersonalTasksScreen() {
@@ -14,7 +14,7 @@ export default function PersonalTasksScreen() {
   // const [listTasks, setListTasks] = useState([]);
   const [taskName, setTaskName] = useState('');
 
-
+  const [dailyTasksModal, setDailyTasksModal] = useState(false);
 
 
   useEffect(() => {
@@ -114,6 +114,15 @@ export default function PersonalTasksScreen() {
     setAddingTasksModal(false);
   };
 
+  const openDailyTasksModal = () => {
+    setDailyTasksModal(true);
+  };
+
+  const closeDailyTasksModal = () => {
+    setDailyTasksModal(false);
+  };
+
+
 
   const ListItem = ({ item, index }) => (
     <TouchableOpacity style={[styles.card, { backgroundColor: getRandomColor() }]} onPress={() => openAddTasksModal(index)}>
@@ -121,7 +130,7 @@ export default function PersonalTasksScreen() {
       <TouchableOpacity onPress={() => deleteList(index)} style={styles.deleteButton}>
         <Entypo name="trash" size={24} color="black" />
       </TouchableOpacity>
-        <MyProgressCircle progress={calculateProgress(item)} />
+      <MyProgressCircle progress={calculateProgress(item)} />
     </TouchableOpacity>
   );
 
@@ -138,7 +147,13 @@ export default function PersonalTasksScreen() {
         <TouchableOpacity style={styles.addListsButton} onPress={openAddListModal}>
           <Ionicons name="add-circle-sharp" size={50} color="darkblue" />
         </TouchableOpacity>
+        <View style={{ top: '-78%', left: '45%', zIndex: 1 }}>
+          <TouchableOpacity style={styles.addTasksButton} onPress={openDailyTasksModal}>
+            <FontAwesome5 name="clipboard-list" size={35} color="red" />
+          </TouchableOpacity>
+        </View>
       </View>
+
 
       <Modal visible={addingListModal} animationType="fade" transparent>
         <View style={styles.AddingListModalContainer}>
@@ -194,6 +209,15 @@ export default function PersonalTasksScreen() {
             </View>
 
           </View>
+        </View>
+      </Modal>
+
+      <Modal visible={dailyTasksModal} animationType="fade">
+
+        <View style={styles.buttonsContainer}>
+          <TouchableOpacity onPress={closeDailyTasksModal} style={styles.button}>
+            <MaterialIcons name="cancel" size={52} color="red" />
+          </TouchableOpacity>
         </View>
       </Modal>
 
@@ -355,6 +379,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 10,
     right: 10,
-    zIndex: 1, 
+    zIndex: 1,
   },
 })
