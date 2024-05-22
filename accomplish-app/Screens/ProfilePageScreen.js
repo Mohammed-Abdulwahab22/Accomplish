@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, Image, TouchableOpacity, FlatList, Modal } from 'react-native';
-import { SimpleLineIcons } from '@expo/vector-icons';
+import { SimpleLineIcons,Feather  } from '@expo/vector-icons';
 
 export default function ProfileScreen() {
   const [isFollowed, setIsFollowed] = useState(false);
@@ -22,11 +22,14 @@ export default function ProfileScreen() {
     { id: '1', title: 'Post 1', content: 'This is the content of post 1.' },
     { id: '2', title: 'Post 2', content: 'This is the content of post 2.' },
     { id: '3', title: 'Post 3', content: 'This is the content of post 3.' },
-    // Add more posts as needed
   ];
 
+  const getRandomColor = () => {
+    const colors = ['#8B0000', '#FF8C00', '#FFD700', '#008000', '#00CED1', '#1E90FF', '#8A2BE2', '#FF69B4'];
+    return colors[Math.floor(Math.random() * colors.length)];
+  };
   const renderItem = ({ item }) => (
-    <TouchableOpacity onPress={() => { setSelectedPost(item); setModalVisible(true); }}>
+    <TouchableOpacity style={[styles.postCard, { backgroundColor: getRandomColor() }]} onPress={() => { setSelectedPost(item); setModalVisible(true); }}>
       <View style={styles.postItem}>
         <Text style={styles.postTitle}>{item.title}</Text>
       </View>
@@ -37,16 +40,16 @@ export default function ProfileScreen() {
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.followCounts}>
-          <Text style={styles.followText}>Following: {followingCount}</Text>
-          <Text style={styles.followText}>Followers: {followersCount}</Text>
-        </View>
+          <View style={{width: 100, height: 50 , borderRadius: 45,backgroundColor: 'lightblue', alignItems: 'center', justifyContent: 'center'}}><Text style={styles.followText}>Following: {followingCount}</Text></View>
+          <View style={{width: 100, height: 50 , borderRadius: 45,backgroundColor: 'lightblue', alignItems: 'center', justifyContent: 'center'}}><Text style={styles.followText}>Followers: {followersCount}</Text></View>
+        </View>             
         <Image source={require('../assets/5d709da8-cbe2-4ac7-a9f6-8f127662e86c.jpeg')} style={styles.profilePicture} />
         <View style={styles.FollowButton}>
           <TouchableOpacity onPress={toggleFollow}>
             <SimpleLineIcons
               name={isFollowed ? "user-following" : "user-follow"}
               size={24}
-              color={isFollowed ? "black" : "red"}
+              color={isFollowed ? "green" : "red"}
             />
           </TouchableOpacity>
         </View>
@@ -66,7 +69,7 @@ export default function ProfileScreen() {
         style={styles.flatList}
       />
       <Modal
-        animationType="slide"
+        animationType='fade'
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => { setModalVisible(false); }}>
@@ -80,6 +83,11 @@ export default function ProfileScreen() {
           </View>
         </View>
       </Modal>
+      <TouchableOpacity style={styles.postButton}>
+      <View style={styles.postButtonContainer}>
+        <Feather name="pen-tool" size={24} color="black" />
+      </View>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -121,8 +129,11 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     marginTop: 20,
+    marginBottom: 20,
     padding: 20,
-    backgroundColor: '#fff',
+    borderRadius: 10,
+    width: '90%',
+    backgroundColor: '#B2B2B2',
   },
   infoText: {
     fontSize: 18,
@@ -176,5 +187,29 @@ const styles = StyleSheet.create({
   FollowButton: {
     bottom: 8,
     left: 35,
+  },
+  postCard:{
+    width: '90%',
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 10,
+    marginLeft: 20,
+    position: 'relative',
+  },
+  postButton: {
+    bottom: '7%',
+    right: '-40%',
+    zIndex: 1,
+  },
+  postButtonContainer: {
+    width: 60, 
+    height: 60, 
+    borderRadius: 30, 
+    backgroundColor: 'lightblue', 
+    justifyContent: 'center', 
+    alignItems: 'center',
+    borderWidth: 1, 
+    borderColor: 'black', 
   },
 });
