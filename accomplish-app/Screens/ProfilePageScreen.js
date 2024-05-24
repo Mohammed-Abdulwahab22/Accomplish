@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
   postItem: {
     padding: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    // borderBottomColor: '#ccc',
   },
   postTitle: {
     fontSize: 16,
@@ -190,6 +190,7 @@ const styles = StyleSheet.create({
   },
   postCard:{
     width: '90%',
+    height: 150,
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',

@@ -1,8 +1,11 @@
 import { StyleSheet, Text, TouchableOpacity, View, Modal, TextInput, ScrollView } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState,useRef } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Ionicons, Entypo, MaterialIcons, MaterialCommunityIcons, FontAwesome5 } from '@expo/vector-icons';
+import { Ionicons, Entypo, MaterialIcons, MaterialCommunityIcons, FontAwesome5, Feather, Fontisto } from '@expo/vector-icons';
 import MyProgressCircle from '../Components/ProgressCircle';
+import { PieChart } from 'react-native-svg-charts'
+import DateTimePicker from '@react-native-community/datetimepicker';
+
 
 export default function PersonalTasksScreen() {
   const [lists, setLists] = useState([]);
@@ -11,10 +14,13 @@ export default function PersonalTasksScreen() {
 
   const [addingTasksModal, setAddingTasksModal] = useState(false);
   const [selectedListIndex, setSelectedListIndex] = useState(null);
-  // const [listTasks, setListTasks] = useState([]);
   const [taskName, setTaskName] = useState('');
 
   const [dailyTasksModal, setDailyTasksModal] = useState(false);
+
+  const [taskDeadline, setTaskDeadline] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
+
 
 
   useEffect(() => {
@@ -24,9 +30,9 @@ export default function PersonalTasksScreen() {
 
   useEffect(() => {
     saveLists();
-    console.log("lists", lists)
 
   }, [lists])
+  
 
   const loadLists = async () => {
     try {
@@ -60,13 +66,16 @@ export default function PersonalTasksScreen() {
     }
   };
 
+
+
   const addTask = () => {
     if (taskName.trim() !== '') {
       const newList = [...lists];
-      newList[selectedListIndex].tasks.push({ name: taskName, completed: false });
+      newList[selectedListIndex].tasks.push({ name: taskName, completed: false, deadline: taskDeadline });
       setLists(newList);
       setTaskName('');
-      // closeAddTasksModal();
+      setShowDatePicker(false);
+
     }
   };
 
@@ -82,20 +91,29 @@ export default function PersonalTasksScreen() {
     return totalTasks === 0 ? 0 : completedTasks / totalTasks;
   };
 
-  const TaskItem = ({ task, listIndex, taskIndex }) => (
-    <TouchableOpacity
-      key={taskIndex}
-      style={[styles.taskContainer, task.completed ? styles.taskCompleted : null]}
-      onPress={() => toggleTaskCompletion(listIndex, taskIndex)}
-    >
-      {task.completed ? (
-        <MaterialCommunityIcons name="check-underline-circle" size={27} color="gold" />
-      ) : (
-        <MaterialCommunityIcons name="checkbox-blank-circle-outline" size={24} color="black" />
-      )}
-      <Text style={[styles.task, task.completed ? styles.taskTextCompleted : null]}>{task.name}</Text>
-    </TouchableOpacity>
-  );
+ 
+  const TaskItem = ({ task, listIndex, taskIndex }) => {
+    console.log('Task Deadline:', task.deadline); // Add this line
+    return (
+      <TouchableOpacity
+        key={taskIndex}
+        style={[styles.taskContainer, task.completed ? styles.taskCompleted : null]}
+        onPress={() => toggleTaskCompletion(listIndex, taskIndex)}
+      >
+        {task.completed ? (
+          <MaterialCommunityIcons name="check-underline-circle" size={27} color="gold" />
+        ) : (
+          <MaterialCommunityIcons name="checkbox-blank-circle-outline" size={24} color="black" />
+        )}
+        <View style={styles.taskDetails}>
+          <Text style={[styles.task, task.completed ? styles.taskTextCompleted : null]}>{task.name}</Text>
+          {task.deadline instanceof Date && (
+            <Text style={styles.deadline}>Deadline: {task.deadline.toLocaleDateString()}</Text>
+          )}
+        </View>
+      </TouchableOpacity>
+    );
+  };
 
   const openAddListModal = () => {
     setAddingListModal(true);
@@ -139,6 +157,38 @@ export default function PersonalTasksScreen() {
     const colors = ['#FF5733', '#EEAB9D', '#33FF57', '#337CFF', '#D933FF', '#33FFE6', '#FF5733', '#57FF33'];
     return colors[Math.floor(Math.random() * colors.length)];
   };
+
+  
+
+  const getPieChartData = () => {
+    const tasks = lists[selectedListIndex]?.tasks || [];
+    const completedTasks = tasks.filter(task => task.completed);
+    const pendingTasks = tasks.filter(task => !task.completed);
+
+    if (tasks.length === 0) {
+      return { pieData: [], allCompleted: false };
+    }
+
+    if (completedTasks.length === tasks.length) {
+      return {
+        pieData: [{
+          value: 1,
+          svg: { fill: 'green' },
+          key: `all-completed`,
+        }],
+        allCompleted: true
+      };
+    }
+
+    const pieData = pendingTasks.map((task, index) => ({
+      value: 1,
+      svg: { fill: getRandomColor() },
+      key: `pie-${index}`,
+    }));
+
+    return { pieData, allCompleted: false };
+  };
+
 
   return (
     <View style={styles.container}>
@@ -185,6 +235,12 @@ export default function PersonalTasksScreen() {
       <Modal visible={addingTasksModal} animationType="fade">
         <View style={styles.AddingTasksModalContainer}>
           <View style={styles.InsideAddingTasksModalContainer}>
+            <PieChart data={getPieChartData().pieData} style={{ height: 200, width: 200, top: '-35%' }} />
+            {getPieChartData().allCompleted && (
+              <View style={styles.checkIconContainer}>
+                <Feather name="check-circle" size={50} color="green" />
+              </View>
+            )}
             {/* Tasks */}
             <ScrollView style={styles.tasksContainer}>
               {lists[selectedListIndex]?.tasks.map((task, index) => (
@@ -198,6 +254,22 @@ export default function PersonalTasksScreen() {
               value={taskName}
               onChangeText={setTaskName}
             />
+            {showDatePicker && (
+              <DateTimePicker
+                value={taskDeadline}
+                mode="date"
+                is24Hour={true}
+                display="default"
+                onChange={(event, selectedDate) => {
+                  const currentDate = selectedDate || taskDeadline;
+                  setTaskDeadline(currentDate);
+                  if (selectedDate) {
+                    setShowDatePicker(false); 
+                  }
+                }}
+
+              />
+            )}
 
             <View style={styles.buttonsContainerTasks}>
               <TouchableOpacity onPress={closeAddTasksModal} style={styles.button}>
@@ -205,6 +277,9 @@ export default function PersonalTasksScreen() {
               </TouchableOpacity>
               <TouchableOpacity onPress={addTask} style={styles.button}>
                 <Entypo name="add-to-list" size={50} color="lightgreen" />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.button}>
+                <Fontisto name="date" size={45} color="black" />
               </TouchableOpacity>
             </View>
 
@@ -381,4 +456,26 @@ const styles = StyleSheet.create({
     right: 10,
     zIndex: 1,
   },
+  checkIconContainer: {
+    position: 'absolute',
+    top: '-9%',
+    left: '58%',
+    transform: [{ translateX: -25 }, { translateY: -25 }],
+    zIndex: 1,
+  },
+  datePicker: {
+    marginTop: 10,
+    width: 200,
+  },
+  taskDetails: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  deadline: {
+    fontSize: 14,
+    marginLeft: 10,
+    color: 'grey',
+  },
+
 })
