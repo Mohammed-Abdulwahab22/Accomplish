@@ -64,6 +64,7 @@ export default function PersonalTasksScreen() {
   const deleteList = (index) => {
     const newList = lists.filter((_, i) => i !== index);
     setLists(newList);
+    setSelectedTask(null);
     console.log("deleted list at index: ", index);
   };
 
@@ -72,6 +73,7 @@ export default function PersonalTasksScreen() {
       setLists([...lists, { name: listName, tasks: [] }]);
       setListName('');
       closeAddListModal();
+      setSelectedTask(null);
       console.log('added list: ', listName);
     }
   };
@@ -85,6 +87,7 @@ export default function PersonalTasksScreen() {
       setLists(newList);
       setTaskName('');
       setShowDatePicker(false);
+      setSelectedTask(null);
       console.log('added task: ', taskName , 'to list: ', lists[selectedListIndex].name);
     }
   };
@@ -102,9 +105,11 @@ export default function PersonalTasksScreen() {
     return totalTasks === 0 ? 0 : completedTasks / totalTasks;
   };
 
- 
+
   const TaskItem = ({ task, listIndex, taskIndex }) => {
     const deadline = task.deadline ? new Date(task.deadline) : null;
+    const isDeadlinePassed = deadline && deadline < new Date();
+  
     return (
       <TouchableOpacity
         key={taskIndex}
@@ -117,43 +122,53 @@ export default function PersonalTasksScreen() {
           <MaterialCommunityIcons name="checkbox-blank-circle-outline" size={24} color="black" />
         )}
         <View style={styles.taskDetails}>
-          <Text style={[styles.task, task.completed ? styles.taskTextCompleted : null]}>{task.name}</Text>
+          <Text style={[styles.task, task.completed ? styles.taskTextCompleted : null, isDeadlinePassed ? styles.deadlinePassed : null]}>
+            {task.name}
+          </Text>
           {deadline && (
-            <Text style={styles.deadline}>Deadline: {deadline.toLocaleDateString()}</Text>
+            <Text style={[styles.deadline, isDeadlinePassed ? styles.deadlinePassed : styles.deadlineNotPassed]}>
+              Deadline: {deadline.toLocaleDateString()}
+            </Text>
           )}
         </View>
       </TouchableOpacity>
     );
   };
-
+  
   const openAddListModal = () => {
     setAddingListModal(true);
+    setSelectedTask(null);
     console.log("opened adding list modal");
   };
 
   const closeAddListModal = () => {
     setAddingListModal(false);
+    setSelectedTask(null);
     console.log("closed adding list modal");
   };
 
   const openAddTasksModal = (index) => {
     setSelectedListIndex(index);
     setAddingTasksModal(true);
+    setSelectedTask(null);
     console.log("opened adding tasks modal");
   };
 
   const closeAddTasksModal = () => {
     setAddingTasksModal(false);
+    setSelectedTask(null);
     console.log("closed adding tasks modal");
   };
 
   const openDailyTasksModal = () => {
     setDailyTasksModal(true);
+    setSelectedTask(null);
     console.log("opened daily tasks modal");
   };
 
   const closeDailyTasksModal = () => {
     setDailyTasksModal(false);
+    setSelectedTask(null);
     console.log("closed daily tasks modal");
   };
 
@@ -471,7 +486,7 @@ const styles = StyleSheet.create({
     width: '120%',
     marginTop: 20,
     bottom: '25%',
-    backgroundColor: '#E3F9E5',
+    backgroundColor: '#EDE6E6',
     borderRadius: 10,
     borderWidth: 2,
     borderColor: 'black',
@@ -549,4 +564,11 @@ const styles = StyleSheet.create({
     bottom: 0,
     backgroundColor: 'rgba(0,0,0,0)',
   },
+  deadlinePassed: {
+    color: 'red',
+  },
+  deadlineNotPassed:
+  {
+    color: 'green',
+  }
 })
