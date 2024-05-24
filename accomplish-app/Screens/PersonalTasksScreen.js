@@ -21,6 +21,7 @@ export default function PersonalTasksScreen() {
   const [taskDeadline, setTaskDeadline] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
 
+  const [selectedTask, setSelectedTask] = useState(null);
 
 
   useEffect(() => {
@@ -200,12 +201,36 @@ export default function PersonalTasksScreen() {
       value: 1,
       svg: { fill: getRandomColor() },
       key: `pie-${index}`,
+      // onPress: () => toggleTaskCompletion(selectedListIndex, index),
+      onPress: () => setSelectedTask(task),
+
     }));
 
     return { pieData, allCompleted: false };
   };
+  const TaskDetailsBox = ({ task }) => {
+    if (!task) return null;
+  
+    return (
+      <View style={styles.taskDetailsBox}>
+        <Text style={styles.taskDetailsText}>Task: {task.name}</Text>
+        <Text style={styles.taskDetailsText}>Deadline: {task.deadline ? new Date(task.deadline).toLocaleDateString() : 'N/A'}</Text>
+      </View>
+    );
+  };
 
-
+  const BackgroundPress = ({ onPress }) => (
+    <TouchableOpacity
+      style={styles.backgroundPress}
+      activeOpacity={1}
+      onPress={onPress}
+    />
+  );
+  const closeTaskDetailsBox = () => {
+    setSelectedTask(null);
+  };
+  
+  
   return (
     <View style={styles.container}>
 
@@ -250,6 +275,8 @@ export default function PersonalTasksScreen() {
 
       <Modal visible={addingTasksModal} animationType="fade">
         <View style={styles.AddingTasksModalContainer}>
+        <BackgroundPress onPress={closeTaskDetailsBox} />
+
           <View style={styles.InsideAddingTasksModalContainer}>
             <PieChart data={getPieChartData().pieData} style={{ height: 200, width: 200, top: '-35%' }} />
             {getPieChartData().allCompleted && (
@@ -258,6 +285,8 @@ export default function PersonalTasksScreen() {
               </View>
             )}
             {/* Tasks */}
+            <TaskDetailsBox task={selectedTask} />
+
             <ScrollView style={styles.tasksContainer}>
               {lists[selectedListIndex]?.tasks.map((task, index) => (
                 <TaskItem key={index} task={task} listIndex={selectedListIndex} taskIndex={index} />
@@ -495,4 +524,29 @@ const styles = StyleSheet.create({
     color: 'grey',
   },
 
+  taskDetailsBox: {
+    position: 'absolute',
+    top: '5%',
+    left: '60%',
+    backgroundColor: 'lightblue',
+    padding: 10,
+    borderRadius: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 5,
+    zIndex: 1,
+  },
+  taskDetailsText: {
+    fontSize: 16,
+  },
+  backgroundPress: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0)',
+  },
 })
