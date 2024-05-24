@@ -7,7 +7,6 @@ const MyProgressCircle = ({ progress }) => {
     const isCompleted = progress === 1;
     const progressPercent = Math.round(progress * 100);
   
-    // Calculate the position of the check circle icon
     const checkIconPosition = {
       position: 'absolute',
       top: '50%',
@@ -25,7 +24,7 @@ const MyProgressCircle = ({ progress }) => {
           endAngle={Math.PI * 0.8}
         />
         {!isCompleted && (
-          <View style={[{ position: 'absolute', top: '50%', left: '50%', transform: [{ translateX: -15 }, { translateY: -8 }] }]}>
+          <View style={[{ position: 'absolute', top: '50%', left: '53%', transform: [{ translateX: -15 }, { translateY: -8 }] }]}>
             <Text style={{ fontSize: 16, color: 'black', textAlign: 'center' }}>{`${progressPercent}%`}</Text>
           </View>
         )}

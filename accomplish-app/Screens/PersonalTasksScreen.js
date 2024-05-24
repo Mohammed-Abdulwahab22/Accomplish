@@ -25,12 +25,12 @@ export default function PersonalTasksScreen() {
 
   useEffect(() => {
     loadLists();
-
+    console.log("loaded the lists of personal tasks screen.");
   }, [])
 
   useEffect(() => {
     saveLists();
-
+    console.log("saved the lists of personal tasks screen.",lists);
   }, [lists])
   
 
@@ -38,13 +38,20 @@ export default function PersonalTasksScreen() {
     try {
       const storedLists = await AsyncStorage.getItem('lists');
       if (storedLists !== null) {
-        setLists(JSON.parse(storedLists));
+        const parsedLists = JSON.parse(storedLists);
+        const listsWithDates = parsedLists.map(list => ({
+          ...list,
+          tasks: list.tasks.map(task => ({
+            ...task,
+            deadline: task.deadline ? new Date(task.deadline) : null,
+          })),
+        }));
+        setLists(listsWithDates);
       }
     } catch (error) {
       console.error('Error loading lists:', error);
     }
   };
-
   const saveLists = async () => {
     try {
       await AsyncStorage.setItem('lists', JSON.stringify(lists));
@@ -56,6 +63,7 @@ export default function PersonalTasksScreen() {
   const deleteList = (index) => {
     const newList = lists.filter((_, i) => i !== index);
     setLists(newList);
+    console.log("deleted list at index: ", index);
   };
 
   const addList = () => {
@@ -63,6 +71,7 @@ export default function PersonalTasksScreen() {
       setLists([...lists, { name: listName, tasks: [] }]);
       setListName('');
       closeAddListModal();
+      console.log('added list: ', listName);
     }
   };
 
@@ -71,11 +80,11 @@ export default function PersonalTasksScreen() {
   const addTask = () => {
     if (taskName.trim() !== '') {
       const newList = [...lists];
-      newList[selectedListIndex].tasks.push({ name: taskName, completed: false, deadline: taskDeadline });
+      newList[selectedListIndex].tasks.push({ name: taskName, completed: false, deadline: taskDeadline.toISOString() });
       setLists(newList);
       setTaskName('');
       setShowDatePicker(false);
-
+      console.log('added task: ', taskName , 'to list: ', lists[selectedListIndex].name);
     }
   };
 
@@ -83,6 +92,7 @@ export default function PersonalTasksScreen() {
     const newList = [...lists];
     newList[listIndex].tasks[taskIndex].completed = !newList[listIndex].tasks[taskIndex].completed;
     setLists(newList);
+    console.log('completed task: ', lists[listIndex].tasks[taskIndex].name, 'in list: ', lists[listIndex].name);
   };
 
   const calculateProgress = (list) => {
@@ -93,7 +103,7 @@ export default function PersonalTasksScreen() {
 
  
   const TaskItem = ({ task, listIndex, taskIndex }) => {
-    console.log('Task Deadline:', task.deadline); // Add this line
+    const deadline = task.deadline ? new Date(task.deadline) : null;
     return (
       <TouchableOpacity
         key={taskIndex}
@@ -107,8 +117,8 @@ export default function PersonalTasksScreen() {
         )}
         <View style={styles.taskDetails}>
           <Text style={[styles.task, task.completed ? styles.taskTextCompleted : null]}>{task.name}</Text>
-          {task.deadline instanceof Date && (
-            <Text style={styles.deadline}>Deadline: {task.deadline.toLocaleDateString()}</Text>
+          {deadline && (
+            <Text style={styles.deadline}>Deadline: {deadline.toLocaleDateString()}</Text>
           )}
         </View>
       </TouchableOpacity>
@@ -117,27 +127,33 @@ export default function PersonalTasksScreen() {
 
   const openAddListModal = () => {
     setAddingListModal(true);
+    console.log("opened adding list modal");
   };
 
   const closeAddListModal = () => {
     setAddingListModal(false);
+    console.log("closed adding list modal");
   };
 
   const openAddTasksModal = (index) => {
     setSelectedListIndex(index);
     setAddingTasksModal(true);
+    console.log("opened adding tasks modal");
   };
 
   const closeAddTasksModal = () => {
     setAddingTasksModal(false);
+    console.log("closed adding tasks modal");
   };
 
   const openDailyTasksModal = () => {
     setDailyTasksModal(true);
+    console.log("opened daily tasks modal");
   };
 
   const closeDailyTasksModal = () => {
     setDailyTasksModal(false);
+    console.log("closed daily tasks modal");
   };
 
 
@@ -387,7 +403,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '70%',
     marginTop: 70,
-    bottom: '65%',
+    bottom: '66%',
+    justifyContent: 'center',
   },
 
   button: {
