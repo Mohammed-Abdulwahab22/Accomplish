@@ -5,6 +5,7 @@ import { Ionicons, Entypo, MaterialIcons, MaterialCommunityIcons, FontAwesome5, 
 import MyProgressCircle from '../Components/ProgressCircle';
 import { PieChart } from 'react-native-svg-charts'
 import DateTimePicker from '@react-native-community/datetimepicker';
+import DailyTasksScreen from '../Components/DailyTasksScreen';
 
 
 export default function PersonalTasksScreen() {
@@ -105,10 +106,13 @@ export default function PersonalTasksScreen() {
     return totalTasks === 0 ? 0 : completedTasks / totalTasks;
   };
 
+  const MAX_CHARACTERS = 9;
 
   const TaskItem = ({ task, listIndex, taskIndex }) => {
     const deadline = task.deadline ? new Date(task.deadline) : null;
     const isDeadlinePassed = deadline && deadline < new Date();
+
+    const truncatedTaskName = task.name.length > MAX_CHARACTERS ? task.name.slice(0, MAX_CHARACTERS) + '...' : task.name;
   
     return (
       <TouchableOpacity
@@ -123,7 +127,7 @@ export default function PersonalTasksScreen() {
         )}
         <View style={styles.taskDetails}>
           <Text style={[styles.task, task.completed ? styles.taskTextCompleted : null, isDeadlinePassed ? styles.deadlinePassed : null]}>
-            {task.name}
+            {truncatedTaskName}
           </Text>
           {deadline && (
             <Text style={[styles.deadline, isDeadlinePassed ? styles.deadlinePassed : styles.deadlineNotPassed]}>
@@ -244,7 +248,7 @@ export default function PersonalTasksScreen() {
   const closeTaskDetailsBox = () => {
     setSelectedTask(null);
   };
-  
+
   
   return (
     <View style={styles.container}>
@@ -351,9 +355,10 @@ export default function PersonalTasksScreen() {
 
         <View style={styles.buttonsContainer}>
           <TouchableOpacity onPress={closeDailyTasksModal} style={styles.button}>
-            <MaterialIcons name="cancel" size={52} color="red" />
+            <MaterialIcons name="cancel" size={35} color="red" />
           </TouchableOpacity>
         </View>
+        <DailyTasksScreen />
       </Modal>
 
       {/*Lists*/}
@@ -542,7 +547,7 @@ const styles = StyleSheet.create({
   taskDetailsBox: {
     position: 'absolute',
     top: '5%',
-    left: '60%',
+    left: '28%',
     backgroundColor: 'lightblue',
     padding: 10,
     borderRadius: 5,
