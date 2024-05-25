@@ -253,13 +253,13 @@ export default function PersonalTasksScreen() {
   return (
     <View style={styles.container}>
 
-      <View style={{ top: '85%', zIndex: 1 }}>
+      <View style={{ top: '82%', zIndex: 1 }}>
         <TouchableOpacity style={styles.addListsButton} onPress={openAddListModal}>
           <Ionicons name="add-circle-sharp" size={50} color="darkblue" />
         </TouchableOpacity>
-        <View style={{ top: '-78%', left: '45%', zIndex: 1 }}>
+        <View style={{ top: '-80%', left: '45%', zIndex: 1 }}>
           <TouchableOpacity style={styles.addTasksButton} onPress={openDailyTasksModal}>
-            <FontAwesome5 name="clipboard-list" size={35} color="red" />
+            <FontAwesome5 name="clipboard-list" size={38} color="red" />
           </TouchableOpacity>
         </View>
       </View>
@@ -354,7 +354,7 @@ export default function PersonalTasksScreen() {
       <Modal visible={dailyTasksModal} animationType="fade">
 
         <View style={styles.buttonsContainer}>
-          <TouchableOpacity onPress={closeDailyTasksModal} style={styles.button}>
+          <TouchableOpacity onPress={closeDailyTasksModal} style={[styles.button,{right:'-980%'}]}>
             <MaterialIcons name="cancel" size={35} color="red" />
           </TouchableOpacity>
         </View>
