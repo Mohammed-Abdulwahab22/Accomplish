@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, Image, TouchableOpacity, FlatList, Modal } from 'react-native';
-import { SimpleLineIcons,Feather  } from '@expo/vector-icons';
 
 export default function ProfileScreen() {
   const [isFollowed, setIsFollowed] = useState(false);
@@ -8,15 +7,6 @@ export default function ProfileScreen() {
   const [followingCount, setFollowingCount] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
-
-  const toggleFollow = () => {
-    setIsFollowed(!isFollowed);
-    if (isFollowed) {
-      setFollowersCount(prevCount => prevCount - 1);
-    } else {
-      setFollowersCount(prevCount => prevCount + 1);
-    }
-  };
 
   const posts = [
     { id: '1', title: 'Post 1', content: 'This is the content of post 1.' },
@@ -28,6 +18,7 @@ export default function ProfileScreen() {
     const colors = ['#8B0000', '#FF8C00', '#FFD700', '#008000', '#00CED1', '#1E90FF', '#8A2BE2', '#FF69B4'];
     return colors[Math.floor(Math.random() * colors.length)];
   };
+
   const renderItem = ({ item }) => (
     <TouchableOpacity style={[styles.postCard, { backgroundColor: getRandomColor() }]} onPress={() => { setSelectedPost(item); setModalVisible(true); }}>
       <View style={styles.postItem}>
@@ -39,22 +30,11 @@ export default function ProfileScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        {/* <View style={styles.followCounts}>
-          <View style={{width: 100, height: 50 , borderRadius: 45,backgroundColor: 'lightblue', alignItems: 'center', justifyContent: 'center'}}><Text style={styles.followText}>Following: {followingCount}</Text></View>
-          <View style={{width: 100, height: 50 , borderRadius: 45,backgroundColor: 'lightblue', alignItems: 'center', justifyContent: 'center'}}><Text style={styles.followText}>Followers: {followersCount}</Text></View>
-        </View>              */}
         <Image source={require('../assets/5d709da8-cbe2-4ac7-a9f6-8f127662e86c.jpeg')} style={styles.profilePicture} />
-        <View style={styles.FollowButton}>
-          <TouchableOpacity onPress={toggleFollow}>
-            <SimpleLineIcons
-              name={isFollowed ? "user-following" : "user-follow"}
-              size={24}
-              color={isFollowed ? "green" : "red"}
-            />
-          </TouchableOpacity>
+        <View style={styles.profileInfo}>
+          <Text style={styles.nameText}>Mohammed Abdulwahab</Text>
+          <Text style={styles.titleText}>Software Developer</Text>
         </View>
-        <Text style={styles.nameText}>Mohammed Abdulwahab</Text>
-        <Text style={styles.titleText}>Software Developer</Text>
       </View>
       <View style={styles.infoContainer}>
         <Text style={styles.infoText}>Bio</Text>
@@ -67,6 +47,7 @@ export default function ProfileScreen() {
         renderItem={renderItem}
         keyExtractor={item => item.id}
         style={styles.flatList}
+        contentContainerStyle={styles.scrollContainer}
       />
       <Modal
         animationType='fade'
@@ -83,84 +64,79 @@ export default function ProfileScreen() {
           </View>
         </View>
       </Modal>
-      {/* <TouchableOpacity style={styles.postButton}>
-      <View style={styles.postButtonContainer}>
-        <Feather name="pen-tool" size={24} color="black" />
-      </View>
-      </TouchableOpacity> */}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    top: 25,
     flex: 1,
     backgroundColor: '#262450',
     alignItems: 'center',
+    paddingTop: 50,
   },
   header: {
-    alignItems: 'center',
-    margin: 20,
-  },
-  followCounts: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '80%',
-    marginBottom: 10,
-    top: 180,
-  },
-  followText: {
-    fontSize: 16,
-    fontWeight: 'bold',
+    alignItems: 'center',
+    marginBottom: 20,
+    width: '90%',
   },
   profilePicture: {
-    width: 70,
-    height: 70,
-    borderRadius: 50,
-    top: -5 ,
-    right: 150,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    marginRight: 20,
+  },
+  profileInfo: {
+    flexDirection: 'column',
   },
   nameText: {
     fontSize: 20,
     fontWeight: 'bold',
-    marginTop: 10,
-    top: -100,
     color: 'white',
-    right:-20,
   },
   titleText: {
     fontSize: 16,
     color: 'grey',
-    top: -90,
-    right: -20,
   },
   infoContainer: {
-    marginTop: 20,
-    marginBottom: 20,
-    padding: 20,
+    backgroundColor: '#3a3a74',
     borderRadius: 10,
+    padding: 20,
     width: '90%',
-    backgroundColor: '#B2B2B2',
+    marginBottom: 20,
   },
   infoText: {
     fontSize: 18,
     fontWeight: 'bold',
+    color: 'white',
     marginBottom: 10,
   },
   bioText: {
     fontSize: 16,
+    color: 'white',
   },
   flatList: {
     width: '100%',
   },
+  scrollContainer: {
+    paddingBottom: 20,
+  },
+  postCard: {
+    width: '90%',
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 10,
+    marginLeft: '5%',
+  },
   postItem: {
     padding: 20,
-    borderBottomWidth: 1,
-    // borderBottomColor: '#ccc',
   },
   postTitle: {
-    fontSize: 16,
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'white',
   },
   modalContainer: {
     flex: 1,
@@ -191,36 +167,5 @@ const styles = StyleSheet.create({
   closeButtonText: {
     fontSize: 16,
     fontWeight: 'bold',
-  },
-  FollowButton: {
-    bottom: 8,
-    left: 35,
-    top:-20,
-    left: -110,
-  },
-  postCard:{
-    width: '90%',
-    height: 150,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginVertical: 10,
-    marginLeft: 20,
-    position: 'relative',
-  },
-  postButton: {
-    bottom: '11%',
-    right: '-40%',
-    zIndex: 1,
-  },
-  postButtonContainer: {
-    width: 60, 
-    height: 60, 
-    borderRadius: 30, 
-    backgroundColor: 'lightblue', 
-    justifyContent: 'center', 
-    alignItems: 'center',
-    borderWidth: 1, 
-    borderColor: 'black', 
   },
 });
