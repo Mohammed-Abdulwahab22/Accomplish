@@ -14,7 +14,7 @@ const Tab = createBottomTabNavigator();
 
 const TabBarCustomButton = ({ children, onPress }) => (
   <View style={{ flex: 1, alignItems: 'center' }}>
-    <View style={{ width: 70, height: 70, borderRadius: 35, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center', top: -25, }}>
+    <View style={{ width: 70, height: 70, borderRadius: 35, backgroundColor: '#262450', alignItems: 'center', justifyContent: 'center', top: -25, }}>
       {children}
     </View>
   </View>
@@ -26,15 +26,19 @@ export default function App() {
       <Tab.Navigator
         screenOptions={{
           headerShown: false,
-          style: {
+          tabBarStyle: {
             position: 'absolute',
             bottom: 0,
             left: 0,
             right: 0,
             elevation: 0,
-            backgroundColor: 'transparent',
-            borderTopColor: 'transparent',
-          }
+            backgroundColor: '#262450', 
+            // borderTopColor: 'transparent',
+            height: 55, 
+          },
+          tabBarActiveTintColor: 'blue', 
+          tabBarInactiveTintColor: 'white ', 
+          tabBarShowLabel: false, 
         }}
       >
       <Tab.Screen

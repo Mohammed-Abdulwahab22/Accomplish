@@ -255,9 +255,9 @@ export default function PersonalTasksScreen() {
 
       <View style={{ top: '82%', zIndex: 1 }}>
         <TouchableOpacity style={styles.addListsButton} onPress={openAddListModal}>
-          <Ionicons name="add-circle-sharp" size={50} color="darkblue" />
+          <Ionicons name="add-circle-sharp" size={50} color="black" />
         </TouchableOpacity>
-        <View style={{ top: '-80%', left: '45%', zIndex: 1 }}>
+        <View style={{ top: '-95%', left: '45%', zIndex: 1 }}>
           <TouchableOpacity style={styles.addTasksButton} onPress={openDailyTasksModal}>
             <FontAwesome5 name="clipboard-list" size={38} color="red" />
           </TouchableOpacity>
@@ -380,7 +380,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 10,
-    backgroundColor: "#E6F7FF"
+    backgroundColor: "#262450"
   },
   addListsButton: {
     width: 70,
@@ -389,7 +389,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'lightblue',
     alignItems: 'center',
     justifyContent: 'center',
-    bottom: '-42%',
+    bottom: '-20%',
     right: '-40%',
     zIndex: 1,
   },

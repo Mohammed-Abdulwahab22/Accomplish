@@ -39,10 +39,10 @@ export default function ProfileScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <View style={styles.followCounts}>
+        {/* <View style={styles.followCounts}>
           <View style={{width: 100, height: 50 , borderRadius: 45,backgroundColor: 'lightblue', alignItems: 'center', justifyContent: 'center'}}><Text style={styles.followText}>Following: {followingCount}</Text></View>
           <View style={{width: 100, height: 50 , borderRadius: 45,backgroundColor: 'lightblue', alignItems: 'center', justifyContent: 'center'}}><Text style={styles.followText}>Followers: {followersCount}</Text></View>
-        </View>             
+        </View>              */}
         <Image source={require('../assets/5d709da8-cbe2-4ac7-a9f6-8f127662e86c.jpeg')} style={styles.profilePicture} />
         <View style={styles.FollowButton}>
           <TouchableOpacity onPress={toggleFollow}>
@@ -83,11 +83,11 @@ export default function ProfileScreen() {
           </View>
         </View>
       </Modal>
-      <TouchableOpacity style={styles.postButton}>
+      {/* <TouchableOpacity style={styles.postButton}>
       <View style={styles.postButtonContainer}>
         <Feather name="pen-tool" size={24} color="black" />
       </View>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </View>
   );
 }
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
   container: {
     top: 25,
     flex: 1,
-    backgroundColor: '#F0F1F6',
+    backgroundColor: '#262450',
     alignItems: 'center',
   },
   header: {
@@ -108,24 +108,32 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '80%',
     marginBottom: 10,
+    top: 180,
   },
   followText: {
     fontSize: 16,
     fontWeight: 'bold',
   },
   profilePicture: {
-    width: 100,
-    height: 100,
+    width: 70,
+    height: 70,
     borderRadius: 50,
+    top: -5 ,
+    right: 150,
   },
   nameText: {
     fontSize: 20,
     fontWeight: 'bold',
     marginTop: 10,
+    top: -100,
+    color: 'white',
+    right:-20,
   },
   titleText: {
     fontSize: 16,
-    color: '#888',
+    color: 'grey',
+    top: -90,
+    right: -20,
   },
   infoContainer: {
     marginTop: 20,
@@ -187,6 +195,8 @@ const styles = StyleSheet.create({
   FollowButton: {
     bottom: 8,
     left: 35,
+    top:-20,
+    left: -110,
   },
   postCard:{
     width: '90%',
@@ -199,7 +209,7 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   postButton: {
-    bottom: '7%',
+    bottom: '11%',
     right: '-40%',
     zIndex: 1,
   },
