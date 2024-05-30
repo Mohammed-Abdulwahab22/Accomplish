@@ -33,7 +33,7 @@ export default function App() {
             right: 0,
             elevation: 0,
             backgroundColor: '#262450', 
-            // borderTopColor: 'transparent',
+            // borderTopColor: 'transparent',//
             height: 55, 
           },
           tabBarActiveTintColor: 'blue', 
