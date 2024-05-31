@@ -76,7 +76,7 @@ const TaskItem = ({ task, listIndex, taskIndex, toggleTaskCompletion }) => {
 };
 
 const ListItem = ({ item, index, deleteList, openAddTasksModal, calculateProgress }) => (
-    
+
   <TouchableOpacity style={[styles.card, { backgroundColor: '#B644DA' }]} onPress={() => openAddTasksModal(index)}>
     <Text style={styles.cardText}>{item.name}</Text>
     <TouchableOpacity onPress={() => deleteList(index)} style={styles.deleteButton}>
@@ -91,7 +91,7 @@ const getRandomColor = () => {
   return colors[Math.floor(Math.random() * colors.length)];
 };
 
-const getPieChartData = (tasks) => {
+const getPieChartData = (tasks, onPressSlice) => {
   const completedTasks = tasks.filter(task => task.completed);
   const pendingTasks = tasks.filter(task => !task.completed);
 
@@ -112,7 +112,7 @@ const getPieChartData = (tasks) => {
 
   const pieData = pendingTasks.map((task, index) => ({
     value: 1,
-    svg: { fill: getRandomColor() },
+    svg: { fill: getRandomColor(), onPress: () => onPressSlice(task) },
     key: `pie-${index}`,
     task: task
   }));
@@ -134,6 +134,9 @@ export default function PersonalTasksScreen() {
   const addTasksModal = useModal();
   const dailyTasksModal = useModal();
 
+  const handleSlicePress = (task) => {
+    setSelectedTask(task);
+  };
   const deleteList = (index) => {
     const newList = lists.filter((_, i) => i !== index);
     setLists(newList);
@@ -171,7 +174,7 @@ export default function PersonalTasksScreen() {
     const completedTasks = list.tasks.filter(task => task.completed).length;
     return totalTasks === 0 ? 0 : completedTasks / totalTasks;
   };
-  
+
 
   return (
     <View style={styles.container}>
@@ -211,11 +214,17 @@ export default function PersonalTasksScreen() {
         <View style={styles.AddingTasksModalContainer}>
           <TouchableOpacity style={styles.backgroundPress} onPress={() => setSelectedTask(null)} />
           <View style={styles.InsideAddingTasksModalContainer}>
-            <PieChart data={getPieChartData(lists[selectedListIndex]?.tasks || []).pieData} style={styles.pieChart}/>
+            <PieChart
+              data={getPieChartData(lists[selectedListIndex]?.tasks || [], handleSlicePress).pieData}
+              style={styles.pieChart}
+            />
             {selectedTask && (
               <View style={styles.taskDetailsBox}>
+              <Text style={styles.taskDetailsText}>
+                  Deadline: {selectedTask.deadline ? new Date(selectedTask.deadline).toLocaleDateString() : 'N/A'}
+                </Text>
                 <Text style={styles.taskDetailsText}>Task: {selectedTask.name}</Text>
-                <Text style={styles.taskDetailsText}>Deadline: {selectedTask.deadline ? new Date(selectedTask.deadline).toLocaleDateString() : 'N/A'}</Text>
+               
               </View>
             )}
             <TextInput
@@ -387,9 +396,10 @@ const styles = StyleSheet.create({
     padding: 10,
     borderWidth: 1,
     borderColor: '#ddd',
-    backgroundColor: '#f9f9f9',
+    backgroundColor: 'lightblue',
     borderRadius: 5,
     marginTop: 10,
+    marginBottom: 10,
   },
   taskDetailsText: {
     fontSize: 14,
