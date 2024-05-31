@@ -15,13 +15,9 @@ export default function PublicTimeLineScreen() {
   //   { id: '3', title: 'Post 3', content: 'This is the content of post 3.', image: 'https://via.placeholder.com/150' },
   // ];
 
-  const getRandomColor = () => {
-    const colors = ['#8B0000', '#FF8C00', '#FFD700', '#008000', '#00CED1', '#1E90FF', '#8A2BE2', '#FF69B4'];
-    return colors[Math.floor(Math.random() * colors.length)];
-  };
-
+ 
   const renderItem = ({ item }) => (
-    <TouchableOpacity style={[styles.postCard, { backgroundColor: getRandomColor() }]}>
+    <TouchableOpacity style={[styles.postCard, { backgroundColor: '#B644DA' }]}>
       <Image source={{ uri: item.image }} style={styles.postImage} />
       <View style={styles.postDetails}>
         <Text style={styles.postTitle}>{item.title}</Text>

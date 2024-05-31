@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, Modal, TextInput, ScrollView,Image } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, Modal, TextInput, ScrollView, Image } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons, Entypo, MaterialIcons, MaterialCommunityIcons, FontAwesome5, Feather, Fontisto } from '@expo/vector-icons';
 import MyProgressCircle from '../Components/ProgressCircle';
@@ -76,7 +76,8 @@ const TaskItem = ({ task, listIndex, taskIndex, toggleTaskCompletion }) => {
 };
 
 const ListItem = ({ item, index, deleteList, openAddTasksModal, calculateProgress }) => (
-  <TouchableOpacity style={[styles.card, { backgroundColor: getRandomColor() }]} onPress={() => openAddTasksModal(index)}>
+    
+  <TouchableOpacity style={[styles.card, { backgroundColor: '#B644DA' }]} onPress={() => openAddTasksModal(index)}>
     <Text style={styles.cardText}>{item.name}</Text>
     <TouchableOpacity onPress={() => deleteList(index)} style={styles.deleteButton}>
       <Entypo name="trash" size={24} color="black" />
@@ -113,21 +114,12 @@ const getPieChartData = (tasks) => {
     value: 1,
     svg: { fill: getRandomColor() },
     key: `pie-${index}`,
+    task: task
   }));
 
   return { pieData, allCompleted: false };
 };
 
-const TaskDetailsBox = ({ task }) => {
-  if (!task) return null;
-
-  return (
-    <View style={styles.taskDetailsBox}>
-      <Text style={styles.taskDetailsText}>Task: {task.name}</Text>
-      <Text style={styles.taskDetailsText}>Deadline: {task.deadline ? new Date(task.deadline).toLocaleDateString() : 'N/A'}</Text>
-    </View>
-  );
-};
 
 export default function PersonalTasksScreen() {
   const [lists, setLists] = useAsyncStorage('lists', []);
@@ -179,6 +171,7 @@ export default function PersonalTasksScreen() {
     const completedTasks = list.tasks.filter(task => task.completed).length;
     return totalTasks === 0 ? 0 : completedTasks / totalTasks;
   };
+  
 
   return (
     <View style={styles.container}>
@@ -218,7 +211,13 @@ export default function PersonalTasksScreen() {
         <View style={styles.AddingTasksModalContainer}>
           <TouchableOpacity style={styles.backgroundPress} onPress={() => setSelectedTask(null)} />
           <View style={styles.InsideAddingTasksModalContainer}>
-            <PieChart data={getPieChartData(lists[selectedListIndex]?.tasks || []).pieData} style={styles.pieChart} />
+            <PieChart data={getPieChartData(lists[selectedListIndex]?.tasks || []).pieData} style={styles.pieChart}/>
+            {selectedTask && (
+              <View style={styles.taskDetailsBox}>
+                <Text style={styles.taskDetailsText}>Task: {selectedTask.name}</Text>
+                <Text style={styles.taskDetailsText}>Deadline: {selectedTask.deadline ? new Date(selectedTask.deadline).toLocaleDateString() : 'N/A'}</Text>
+              </View>
+            )}
             <TextInput
               style={styles.input}
               placeholder="Enter task name"
