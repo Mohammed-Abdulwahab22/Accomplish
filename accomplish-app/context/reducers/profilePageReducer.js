@@ -5,7 +5,10 @@ const initialState = {
     followersCount : 0,
     followingCount : 0,
     modalVisible : false,
-    selectedPost : null
+    selectedPost : null,
+    posts:[ { id: '1', title: 'Post 1', content: 'This is the content of post 1.', image: 'https://via.placeholder.com/150' },
+    { id: '2', title: 'Post 2', content: 'This is the content of post 2.', image: 'https://via.placeholder.com/150' },
+    { id: '3', title: 'Post 3', content: 'This is the content of post 3.', image: 'https://via.placeholder.com/150' },]
     
 
 };
@@ -29,9 +32,12 @@ const profilePageSlice = createSlice({
        },
        setSelectedPost: (state, action) => {
         state.selectedPost = action.payload;
+       },
+       setPosts: (state, action) => {
+        state.posts = action.payload;
        }
     }
 });
 
-export const {toggleFollow, setFollowersCount, setFollowingCount, setModalVisible, setSelectedPost} = profilePageSlice.actions;
+export const {toggleFollow, setFollowersCount, setFollowingCount, setModalVisible, setSelectedPost,setPosts} = profilePageSlice.actions;
 export default profilePageSlice.reducer;

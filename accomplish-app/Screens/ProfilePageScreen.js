@@ -3,9 +3,9 @@ import { StyleSheet, View, Text, Image, TouchableOpacity, FlatList, Modal } from
 import { SimpleLineIcons, Ionicons } from '@expo/vector-icons';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { toggleFollow, setFollowersCount, setFollowingCount, setModalVisible, setSelectedPost } from '../context/reducers/profilePageReducer';
+import { toggleFollow, setFollowersCount, setFollowingCount, setModalVisible, setSelectedPost,setPosts } from '../context/reducers/profilePageReducer';
 export default function ProfileScreen() {
-  const { isFollowed, followersCount, followingCount, modalVisible, selectedPost } = useSelector(state => state.profilePage);
+  const { isFollowed, followersCount, followingCount, modalVisible, selectedPost,posts } = useSelector(state => state.profilePage);
   const dispatch = useDispatch();
 
   const handleToggleFollow = () => {
@@ -15,11 +15,11 @@ export default function ProfileScreen() {
   };
 
 
-  const posts = [
-    { id: '1', title: 'Post 1', content: 'This is the content of post 1.', image: 'https://via.placeholder.com/150' },
-    { id: '2', title: 'Post 2', content: 'This is the content of post 2.', image: 'https://via.placeholder.com/150' },
-    { id: '3', title: 'Post 3', content: 'This is the content of post 3.', image: 'https://via.placeholder.com/150' },
-  ];
+  // const posts = [
+  //   { id: '1', title: 'Post 1', content: 'This is the content of post 1.', image: 'https://via.placeholder.com/150' },
+  //   { id: '2', title: 'Post 2', content: 'This is the content of post 2.', image: 'https://via.placeholder.com/150' },
+  //   { id: '3', title: 'Post 3', content: 'This is the content of post 3.', image: 'https://via.placeholder.com/150' },
+  // ];
 
   const getRandomColor = () => {
     const colors = ['#8B0000', '#FF8C00', '#FFD700', '#008000', '#00CED1', '#1E90FF', '#8A2BE2', '#FF69B4'];

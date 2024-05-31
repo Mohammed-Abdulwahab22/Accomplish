@@ -1,13 +1,39 @@
-import React from 'react';
-import { StyleSheet, View, Text, FlatList, TouchableOpacity } from 'react-native';
+import React,{useEffect} from 'react';
+import { StyleSheet, View, Text, FlatList, TouchableOpacity,Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
+import { useSelector, useDispatch } from 'react-redux';
+import { setProjects, setSelectedProject, setProjectDone, setDeleteProject, setEditProject, setAddproject} from '../context/reducers/TeamTasksScreenReducer';
 export default function TeamTasksScreen() {
-  const tasks = [
-    { id: '1', task: 'Task 1', description: 'This is the description of task 1.' },
-    { id: '2', task: 'Task 2', description: 'This is the description of task 2.' },
-    { id: '3', task: 'Task 3', description: 'This is the description of task 3.' },
-  ];
+  const { projects, selectedProject, projectDone, deleteProject, editProject,addProject } = useSelector(state => state.teamTasks);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      const response = await fetch('YOUR_API_ENDPOINT');
+      const data = await response.json();
+      dispatch(setProjects(data));
+    };
+
+    fetchProjects();
+  }, [dispatch]);
+  
+  const handleAddproject = () => {
+    dispatch(setAddproject());
+  }
+
+  const handleProjectDone = (id) => {
+    dispatch(setProjectDone(id));
+  };
+
+  const handleEditProject = (id) => {
+    dispatch(setEditProject(id));
+  };
+
+  const handleDeleteProject = (id) => {
+    dispatch(setDeleteProject(id));
+  };
+
 
   const renderItem = ({ item }) => (
     <TouchableOpacity style={styles.taskCard}>
@@ -33,11 +59,16 @@ export default function TeamTasksScreen() {
 
   return (
     <View style={styles.container}>
+    <View style={{top:'82%', zIndex: 1}}>
+    <TouchableOpacity style={styles.addListsButton} >
+          <Image source={require('../assets/add.png')} style={{ width: 50, height: 50 }} />
+        </TouchableOpacity>
+    </View>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Team Tasks</Text>
+        <Text style={styles.headerTitle}>Team Projects</Text>
       </View>
       <FlatList
-        data={tasks}
+        data={projects}
         renderItem={renderItem}
         keyExtractor={item => item.id}
         contentContainerStyle={styles.flatListContent}
@@ -56,6 +87,7 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#1E1C3C',
     alignItems: 'center',
+    marginTop: 20,
   },
   headerTitle: {
     fontSize: 24,
@@ -101,5 +133,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: 'white',
     marginTop: 10,
+  },
+  addListsButton: {
+    position: 'absolute',
+    right: 20,
+    bottom: 8,
+    zIndex: 1,
   },
 });

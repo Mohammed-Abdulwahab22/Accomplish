@@ -2,12 +2,18 @@ import React from 'react';
 import { StyleSheet, View, Text, FlatList, TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
+import { useSelector, useDispatch } from 'react-redux';
+import { setPosts } from '../context/reducers/PublicTimLineReducer';
+
 export default function PublicTimeLineScreen() {
-  const posts = [
-    { id: '1', title: 'Post 1', content: 'This is the content of post 1.', image: 'https://via.placeholder.com/150' },
-    { id: '2', title: 'Post 2', content: 'This is the content of post 2.', image: 'https://via.placeholder.com/150' },
-    { id: '3', title: 'Post 3', content: 'This is the content of post 3.', image: 'https://via.placeholder.com/150' },
-  ];
+  const dispatch = useDispatch();
+  const { posts } = useSelector(state => state.publicTimeLine);
+  
+  // const posts = [
+  //   { id: '1', title: 'Post 1', content: 'This is the content of post 1.', image: 'https://via.placeholder.com/150' },
+  //   { id: '2', title: 'Post 2', content: 'This is the content of post 2.', image: 'https://via.placeholder.com/150' },
+  //   { id: '3', title: 'Post 3', content: 'This is the content of post 3.', image: 'https://via.placeholder.com/150' },
+  // ];
 
   const getRandomColor = () => {
     const colors = ['#8B0000', '#FF8C00', '#FFD700', '#008000', '#00CED1', '#1E90FF', '#8A2BE2', '#FF69B4'];
@@ -37,15 +43,17 @@ export default function PublicTimeLineScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
+      {/* <View style={styles.header}>
         <Text style={styles.headerTitle}>Public Timeline</Text>
-      </View>
+      </View> */}
+      <View style={styles.posts}>
       <FlatList
         data={posts}
         renderItem={renderItem}
         keyExtractor={item => item.id}
         contentContainerStyle={styles.flatListContent}
       />
+      </View>
     </View>
   );
 }
@@ -55,23 +63,24 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#262450',
   },
-  header: {
-    width: '100%',
-    padding: 20,
-    backgroundColor: '#1E1C3C',
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontSize: 24,
-    color: 'white',
-    fontWeight: 'bold',
-  },
+  // header: {
+  //   width: '100%',
+  //   padding: 20,
+  //   backgroundColor: '#1E1C3C',
+  //   alignItems: 'center',
+  //   marginTop: 20,
+  // },
+  // headerTitle: {
+  //   fontSize: 24,
+  //   color: 'white',
+  //   fontWeight: 'bold',
+  // },
   flatListContent: {
     alignItems: 'center',
     paddingBottom: 100,
   },
   postCard: {
-    width: 350,
+    width: 380,
     borderRadius: 10,
     marginVertical: 10,
     overflow: 'hidden',
@@ -100,4 +109,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
+  posts: {
+    marginTop: '10%',
+  }
 });
