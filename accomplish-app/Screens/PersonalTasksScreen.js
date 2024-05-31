@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, Modal, TextInput, ScrollView } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, Modal, TextInput, ScrollView,Image } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons, Entypo, MaterialIcons, MaterialCommunityIcons, FontAwesome5, Feather, Fontisto } from '@expo/vector-icons';
 import MyProgressCircle from '../Components/ProgressCircle';
@@ -184,7 +184,7 @@ export default function PersonalTasksScreen() {
     <View style={styles.container}>
       <View style={{ top: '82%', zIndex: 1 }}>
         <TouchableOpacity style={styles.addListsButton} onPress={addListModal.openModal}>
-          <Ionicons name="add-circle-sharp" size={50} color="black" />
+          <Image source={require('../assets/add.png')} style={{ width: 50, height: 50 }} />
         </TouchableOpacity>
         <View style={{ top: '-95%', left: '45%', zIndex: 1 }}>
           <TouchableOpacity style={styles.addTasksButton} onPress={dailyTasksModal.openModal}>
@@ -276,7 +276,7 @@ const styles = StyleSheet.create({
   addListsButton: {
     position: 'absolute',
     right: 20,
-    bottom: 20,
+    bottom: 8,
     zIndex: 1,
   },
   addTasksButton: {
@@ -334,6 +334,7 @@ const styles = StyleSheet.create({
     padding: 15,
     margin: 10,
     borderRadius: 10,
+    height: 180,
   },
   cardText: {
     fontSize: 18,

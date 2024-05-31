@@ -1,17 +1,24 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, Image, TouchableOpacity, FlatList, Modal } from 'react-native';
+import { SimpleLineIcons, Ionicons } from '@expo/vector-icons';
 
+import { useSelector, useDispatch } from 'react-redux';
+import { toggleFollow, setFollowersCount, setFollowingCount, setModalVisible, setSelectedPost } from '../context/reducers/profilePageReducer';
 export default function ProfileScreen() {
-  const [isFollowed, setIsFollowed] = useState(false);
-  const [followersCount, setFollowersCount] = useState(0);
-  const [followingCount, setFollowingCount] = useState(0);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [selectedPost, setSelectedPost] = useState(null);
+  const { isFollowed, followersCount, followingCount, modalVisible, selectedPost } = useSelector(state => state.profilePage);
+  const dispatch = useDispatch();
+
+  const handleToggleFollow = () => {
+    dispatch(toggleFollow());
+    dispatch(setFollowersCount(isFollowed ? followersCount + 1 : followersCount - 1));
+
+  };
+
 
   const posts = [
-    { id: '1', title: 'Post 1', content: 'This is the content of post 1.' },
-    { id: '2', title: 'Post 2', content: 'This is the content of post 2.' },
-    { id: '3', title: 'Post 3', content: 'This is the content of post 3.' },
+    { id: '1', title: 'Post 1', content: 'This is the content of post 1.', image: 'https://via.placeholder.com/150' },
+    { id: '2', title: 'Post 2', content: 'This is the content of post 2.', image: 'https://via.placeholder.com/150' },
+    { id: '3', title: 'Post 3', content: 'This is the content of post 3.', image: 'https://via.placeholder.com/150' },
   ];
 
   const getRandomColor = () => {
@@ -20,9 +27,23 @@ export default function ProfileScreen() {
   };
 
   const renderItem = ({ item }) => (
-    <TouchableOpacity style={[styles.postCard, { backgroundColor: getRandomColor() }]} onPress={() => { setSelectedPost(item); setModalVisible(true); }}>
-      <View style={styles.postItem}>
+
+    <TouchableOpacity style={[styles.postCard, { backgroundColor: getRandomColor() }]} onPress={() => { dispatch(setSelectedPost(item)); dispatch(setModalVisible(modalVisible)); }}>
+      <Image source={{ uri: item.image }} style={styles.postImage} />
+      <View style={styles.postDetails}>
         <Text style={styles.postTitle}>{item.title}</Text>
+        <Text style={styles.postContent}>{item.content}</Text>
+      </View>
+      <View style={styles.postActions}>
+        <TouchableOpacity>
+          <Ionicons name="heart-outline" size={24} color="white" />
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <Ionicons name="chatbubble-outline" size={24} color="white" />
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <Ionicons name="share-outline" size={24} color="white" />
+        </TouchableOpacity>
       </View>
     </TouchableOpacity>
   );
@@ -35,13 +56,26 @@ export default function ProfileScreen() {
           <Text style={styles.nameText}>Mohammed Abdulwahab</Text>
           <Text style={styles.titleText}>Software Developer</Text>
         </View>
+
       </View>
       <View style={styles.infoContainer}>
-        <Text style={styles.infoText}>Bio</Text>
-        <Text style={styles.bioText}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-        </Text>
+        <View style={styles.followersFollowingContainer}>
+          <View style={styles.followersFollowing}>
+            <Text style={styles.followText}>Followers: {followersCount}</Text>
+          </View>
+          <View style={styles.followersFollowing}>
+            <Text style={styles.followText}>Following: {followingCount}</Text>
+          </View>
+        </View>
+        <TouchableOpacity style={styles.followButton} onPress={handleToggleFollow}>
+          {isFollowed ? (
+            <SimpleLineIcons name="user-follow" size={24} color="red" />
+          ) : (
+            <SimpleLineIcons name="user-following" size={24} color="green" />
+          )}
+        </TouchableOpacity>
       </View>
+
       <FlatList
         data={posts}
         renderItem={renderItem}
@@ -53,12 +87,12 @@ export default function ProfileScreen() {
         animationType='fade'
         transparent={true}
         visible={modalVisible}
-        onRequestClose={() => { setModalVisible(false); }}>
+        onRequestClose={() => { dispatch(setModalVisible(false)); }}>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>{selectedPost?.title}</Text>
             <Text style={styles.modalText}>{selectedPost?.content}</Text>
-            <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeButton}>
+            <TouchableOpacity onPress={() => dispatch(setModalVisible(modalVisible))} style={styles.closeButton}>
               <Text style={styles.closeButtonText}>Close</Text>
             </TouchableOpacity>
           </View>
@@ -100,11 +134,31 @@ const styles = StyleSheet.create({
     color: 'grey',
   },
   infoContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     backgroundColor: '#3a3a74',
     borderRadius: 10,
-    padding: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
     width: '90%',
     marginBottom: 20,
+  },
+  followersFollowingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  followersFollowing: {
+    marginRight: 20,
+  },
+  followText: {
+    fontSize: 16,
+    color: 'white',
+  },
+  followButton: {
+    backgroundColor: '#262450',
+    borderRadius: 20,
+    padding: 10,
   },
   infoText: {
     fontSize: 18,
@@ -120,23 +174,39 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   scrollContainer: {
-    paddingBottom: 20,
+    alignItems: 'center',
+    paddingBottom: 100,
   },
   postCard: {
-    width: '90%',
+    width: 350,
     borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
     marginVertical: 10,
-    marginLeft: '5%',
+    overflow: 'hidden',
+    elevation: 5,
   },
-  postItem: {
+
+  postImage: {
+    width: '100%',
+    height: 150,
+  },
+  postDetails: {
     padding: 20,
   },
   postTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
     color: 'white',
+    marginBottom: 10,
+  },
+  postContent: {
+    fontSize: 16,
+    color: 'white',
+  },
+  postActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingVertical: 10,
+    backgroundColor: 'rgba(0,0,0,0.5)',
   },
   modalContainer: {
     flex: 1,
