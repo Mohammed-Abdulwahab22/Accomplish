@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, Text, FlatList, TouchableOpacity, Image } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, Entypo } from '@expo/vector-icons';
 
 import { useSelector, useDispatch } from 'react-redux';
 import { setPosts } from '../context/reducers/PublicTimLineReducer';
@@ -50,6 +50,9 @@ export default function PublicTimeLineScreen() {
         contentContainerStyle={styles.flatListContent}
       />
       </View>
+      <TouchableOpacity style={styles.postButton}>
+          <Entypo name="pencil" size={35} color="white" />
+      </TouchableOpacity>
     </View>
   );
 }
@@ -71,6 +74,18 @@ const styles = StyleSheet.create({
   //   color: 'white',
   //   fontWeight: 'bold',
   // },
+  postButton: {
+    position: 'absolute',
+    bottom: "15%", 
+    right: 20,
+    backgroundColor: 'blue',
+    padding: 10,
+    borderRadius: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 10,
+
+  },
   flatListContent: {
     alignItems: 'center',
     paddingBottom: 100,
