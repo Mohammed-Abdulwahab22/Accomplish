@@ -1,5 +1,9 @@
 const User = require("../Models/Users");
 const emailValidator = require("email-validator"); 
+const nodemailer = require('nodemailer');
+
+const emailUser = process.env.EMAIL_USER;
+const emailPass = process.env.EMAIL_PASS;
 
 
 const isEmailRegistered = async (email) => {
@@ -12,9 +16,28 @@ const isEmailRegistered = async (email) => {
 }
 
 
-const sendVerificationEmail = async (email) => {
-    // Send a verification email with a unique link
-}
+// const sendVerificationEmail = async (email) => {
+//     try {
+//         const transporter = nodemailer.createTransport({
+//             service: 'Gmail',
+//             auth: {
+//                 user: emailUser,
+//                 pass: emailPass
+//             }
+//         });
+
+//         const mailOptions = {
+//             from: emailUser,
+//             to: email,
+//             subject: 'Verification Email',
+//             html: `<p>Click the following link to verify your email: <a href="your_verification_link">Verify Email</a></p>`
+//         };
+
+//         await transporter.sendMail(mailOptions);
+//     } catch (error) {
+//         throw error;
+//     }
+// };
 
 const createUser = async (req, res) => {
     const { name, email, password } = req.body;
@@ -41,7 +64,7 @@ const createUser = async (req, res) => {
         const user = await User.create({ name, email, password });
 
         
-        await sendVerificationEmail(email);
+        // await sendVerificationEmail(email);
 
         res.status(201).json({
             success: true,
@@ -87,4 +110,4 @@ const logingUser = async (req, res) => {
     }
 }
 
-module.exports = { createUser, logingUser };
+module.exports = { createUser, logingUser , isEmailRegistered };

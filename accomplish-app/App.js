@@ -9,7 +9,7 @@ import TeamTasksScreen from "./Screens/TeamTasksScreen";
 import PublicTimeLineScreen from "./Screens/PublicTimeLineScreen";
 import ProfilePageScreen from "./Screens/ProfilePageScreen";
 import SettingsScreen from './Screens/SettingsScreen';
-
+import AuthScreen from './Screens/AuthScreen';
 
 import { Provider } from 'react-redux';
 import store from './context/store';
@@ -48,7 +48,7 @@ export default function App() {
         >
           <Tab.Screen
             name='Settings'
-            component={SettingsScreen}
+            component={AuthScreen}
             options={{
               tabBarIcon: ({ color, size }) => (
                 <Ionicons name="settings-outline" size={24} color={color} />)

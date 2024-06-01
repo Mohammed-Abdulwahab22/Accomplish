@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Alert, Image, TouchableOpacity } from 'react-native';
 // import * as SecureStore from 'expo-secure-store';
 
 const AuthScreen = ({ navigation }) => {
@@ -27,10 +27,10 @@ const AuthScreen = ({ navigation }) => {
 
       // await SecureStore.setItemAsync('userToken', data.token);
 
-    // navigation.replace('Main');
+      // navigation.replace('Main');
 
-    console.log(data);
-    
+      console.log(data);
+
     } catch (error) {
       console.error('Error:', error);
       Alert.alert('Error', error.message);
@@ -39,6 +39,10 @@ const AuthScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.appIcon}>
+        <Image source={require('../assets/icon1.png')} style={styles.appIconImage} />
+
+      </View>
       <Text style={styles.title}>{isRegister ? 'Register' : 'Login'}</Text>
       {isRegister && (
         <TextInput
@@ -60,39 +64,71 @@ const AuthScreen = ({ navigation }) => {
         value={password}
         onChangeText={setPassword}
         secureTextEntry
-      />
-      <Button title={isRegister ? 'Register' : 'Login'} onPress={handleAuth} />
-      <Button
-        title={isRegister ? 'Switch to Login' : 'Switch to Register'}
-        onPress={() => setIsRegister(!isRegister)}
-      />
+      /><View style={{ flexDirection: 'row', marginTop: 16 }}>
+        <TouchableOpacity
+          style={[styles.button, { backgroundColor: '#4CAF50' }]}
+          onPress={handleAuth}
+        >
+          <Text style={styles.buttonText}>{isRegister ? 'Register' : 'Login'}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => setIsRegister(!isRegister)}>
+          <Text style={{ color: '#fff' , fontWeight: 'bold', fontSize: 16 ,marginLeft: 10, top: 5}}>
+            {isRegister ? 'You already have an account?' : 'You dont have an account?'}
+          </Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      padding: 16,
-      backgroundColor: '#262450', 
-    },
-    title: {
-      fontSize: 24,
-      marginBottom: 16,
-      color: '#ffffff', 
-    },
-    input: {
-      width: '100%',
-      padding: 8,
-      marginVertical: 8,
-      borderWidth: 1,
-      borderColor: '#ccc',
-      borderRadius: 4,
-      backgroundColor: '#ffffff', 
-      color: '#262450', 
-    },
-  });
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+    backgroundColor: '#262450',
+  },
+  title: {
+    fontSize: 24,
+    marginBottom: 16,
+    color: '#ffffff',
+    marginTop: 10,
+    fontWeight: 'bold',
+  },
+  input: {
+    width: '100%',
+    padding: 8,
+    marginVertical: 8,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 4,
+    backgroundColor: '#ffffff',
+    color: '#262450',
+  },
+  appIconImage: {
+    width: 200,
+    height: 200,
+    marginBottom: 10,
+    borderRadius: 50,
+  },
+
+  appIcon: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  button: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 5,
+    marginRight: 15,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+});
 
 export default AuthScreen;
