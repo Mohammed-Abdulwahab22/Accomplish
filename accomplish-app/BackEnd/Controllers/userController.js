@@ -1,5 +1,6 @@
 const User = require("../Models/Users");
 const emailValidator = require("email-validator"); 
+
 const nodemailer = require('nodemailer');
 
 const emailUser = process.env.EMAIL_USER;

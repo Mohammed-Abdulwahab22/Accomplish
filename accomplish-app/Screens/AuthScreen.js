@@ -1,12 +1,42 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert, Image, TouchableOpacity } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 // import * as SecureStore from 'expo-secure-store';
 
-const AuthScreen = ({ navigation }) => {
+const AuthScreen = ({ setIsLoggedIn }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isRegister, setIsRegister] = useState(false);
+
+  // const handleAuth = async () => {
+  //   try {
+  //     const endpoint = isRegister ? 'register' : 'login';
+  //     const response = await fetch(`http://10.0.2.2:3000/api/${endpoint}`, {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({ name, email, password }),
+  //     });
+
+  //     const data = await response.json();
+
+  //     if (!response.ok) {
+  //       throw new Error(data.message || 'Something went wrong!');
+  //     }
+
+  //     await AsyncStorage.setItem('userToken', data.token);
+
+  //     // navigation.replace('Main');
+
+  //     console.log(data);
+
+  //   } catch (error) {
+  //     console.error('Error:', error);
+  //     Alert.alert('Error', error.message);
+  //   }
+  // };
 
   const handleAuth = async () => {
     try {
@@ -18,25 +48,31 @@ const AuthScreen = ({ navigation }) => {
         },
         body: JSON.stringify({ name, email, password }),
       });
-
+  
       const data = await response.json();
-
+  
       if (!response.ok) {
         throw new Error(data.message || 'Something went wrong!');
       }
+  
+      if (!data) {
+        throw new Error('Token not found in response data');
+      }
+        const dddd = String(data.token);
+      await AsyncStorage.setItem('userToken', dddd);
+      setIsLoggedIn(true); 
 
-      // await SecureStore.setItemAsync('userToken', data.token);
-
+  
       // navigation.replace('Main');
-
+  
       console.log(data);
-
+  
     } catch (error) {
       console.error('Error:', error);
       Alert.alert('Error', error.message);
     }
   };
-
+  
   return (
     <View style={styles.container}>
       <View style={styles.appIcon}>

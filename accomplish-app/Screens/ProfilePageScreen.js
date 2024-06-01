@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, Image, TouchableOpacity, FlatList, Modal } from 'react-native';
+import { StyleSheet, View, Text, Image, TouchableOpacity, FlatList, Modal, Button } from 'react-native';
 import { SimpleLineIcons, Ionicons } from '@expo/vector-icons';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleFollow, setFollowersCount, setFollowingCount, setModalVisible, setSelectedPost,setPosts } from '../context/reducers/profilePageReducer';
-export default function ProfileScreen() {
+export default function ProfileScreen({route}) {
   const { isFollowed, followersCount, followingCount, modalVisible, selectedPost,posts } = useSelector(state => state.profilePage);
   const dispatch = useDispatch();
 
@@ -20,9 +20,16 @@ export default function ProfileScreen() {
   //   { id: '2', title: 'Post 2', content: 'This is the content of post 2.', image: 'https://via.placeholder.com/150' },
   //   { id: '3', title: 'Post 3', content: 'This is the content of post 3.', image: 'https://via.placeholder.com/150' },
   // ];
+  const { setIsLoggedIn } = route.params;
 
- 
-
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.removeItem('userToken');
+      setIsLoggedIn(false);
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
+  };
   const renderItem = ({ item }) => (
 
     <TouchableOpacity style={[styles.postCard, { backgroundColor: '#B644DA' }]} onPress={() => { dispatch(setSelectedPost(item)); dispatch(setModalVisible(modalVisible)); }}>
@@ -52,6 +59,7 @@ export default function ProfileScreen() {
         <View style={styles.profileInfo}>
           <Text style={styles.nameText}>Mohammed Abdulwahab</Text>
           <Text style={styles.titleText}>Software Developer</Text>
+          <Button title="Logout" onPress={handleLogout} />
         </View>
 
       </View>

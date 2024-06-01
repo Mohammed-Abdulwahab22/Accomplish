@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState , useEffect} from 'react';
 import { StyleSheet, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialCommunityIcons, FontAwesome6, Ionicons, Entypo } from '@expo/vector-icons';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import PersonalTasksScreen from "./Screens/PersonalTasksScreen";
 import TeamTasksScreen from "./Screens/TeamTasksScreen";
 import PublicTimeLineScreen from "./Screens/PublicTimeLineScreen";
@@ -25,6 +25,27 @@ const TabBarCustomButton = ({ children, onPress }) => (
 );
 
 export default function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    checkLoginStatus();
+  }, [isLoggedIn]);
+
+  const checkLoginStatus = async () => {
+    try {
+      const userToken = await AsyncStorage.getItem('userToken');
+      if (userToken) {
+        setIsLoggedIn(true);
+      }
+    } catch (error) {
+      console.error('Error checking login status:', error);
+    }
+  };
+
+  if (!isLoggedIn) {
+    return <AuthScreen setIsLoggedIn={setIsLoggedIn} />;
+  }
+  else{
   return (
     <Provider store={store}>
       <NavigationContainer>
@@ -87,6 +108,7 @@ export default function App() {
           <Tab.Screen
             name="Profile"
             component={ProfilePageScreen}
+            initialParams={{ setIsLoggedIn }} 
             options={{
               tabBarIcon: ({ color, size }) => (
                 // <MaterialCommunityIcons name="face-man-profile" size={24} color={color} />
@@ -97,6 +119,7 @@ export default function App() {
       </NavigationContainer>
     </Provider>
   );
+}
 }
 
 
