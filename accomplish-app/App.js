@@ -48,7 +48,7 @@ export default function App() {
         >
           <Tab.Screen
             name='Settings'
-            component={AuthScreen}
+            component={SettingsScreen}
             options={{
               tabBarIcon: ({ color, size }) => (
                 <Ionicons name="settings-outline" size={24} color={color} />)
