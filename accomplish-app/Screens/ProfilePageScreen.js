@@ -59,7 +59,9 @@ export default function ProfileScreen({route}) {
         <View style={styles.profileInfo}>
           <Text style={styles.nameText}>Mohammed Abdulwahab</Text>
           <Text style={styles.titleText}>Software Developer</Text>
-          <Button title="Logout" onPress={handleLogout} />
+          <TouchableOpacity  onPress={handleLogout} style={styles.logoutButton}>
+            <Image source={require('../assets/logout.png')} style={styles.logoutIcon} />
+          </TouchableOpacity>
         </View>
 
       </View>
@@ -113,6 +115,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#262450',
     alignItems: 'center',
     paddingTop: 50,
+  },
+  logoutButton: {
+    position: 'absolute',
+    top: 10,
+    right: -60,
+    backgroundColor: 'white',
+    borderRadius: 30,
+    padding: 7,
+  },
+  logoutIcon: {
+    width: 30,
+    height: 30,
   },
   header: {
     flexDirection: 'row',
