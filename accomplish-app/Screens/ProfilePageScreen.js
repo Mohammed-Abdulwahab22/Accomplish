@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Text, Image, TouchableOpacity, FlatList, Modal, Button } from 'react-native';
 import { SimpleLineIcons, Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector, useDispatch } from 'react-redux';
-import { toggleFollow, setFollowersCount, setFollowingCount, setModalVisible, setSelectedPost,setPosts } from '../context/reducers/profilePageReducer';
+import { toggleFollow, setFollowersCount, setFollowingCount, setModalVisible, setSelectedPost,setPosts,setprofileName,setprofileImage,setprofileBio } from '../context/reducers/profilePageReducer';
 export default function ProfileScreen({route}) {
-  const { isFollowed, followersCount, followingCount, modalVisible, selectedPost,posts } = useSelector(state => state.profilePage);
+  const { isFollowed, followersCount, followingCount, modalVisible, selectedPost,posts, profileName, profileImage, profileBio } = useSelector(state => state.profilePage);
   const dispatch = useDispatch();
 
   const handleToggleFollow = () => {
@@ -14,6 +14,19 @@ export default function ProfileScreen({route}) {
 
   };
 
+  const getInfo = async () => {
+  var userInfo = await AsyncStorage.getItem('userInfo');
+  if (userInfo) {
+    userInfo = JSON.parse(userInfo);
+    dispatch(setprofileName(userInfo.data.name));
+
+  }
+
+  }
+
+  useEffect(() => {
+    getInfo();
+  }, [profileName]);
 
   // const posts = [
   //   { id: '1', title: 'Post 1', content: 'This is the content of post 1.', image: 'https://via.placeholder.com/150' },
@@ -25,6 +38,7 @@ export default function ProfileScreen({route}) {
   const handleLogout = async () => {
     try {
       await AsyncStorage.removeItem('userToken');
+      await AsyncStorage.removeItem('userInfo');
       setIsLoggedIn(false);
     } catch (error) {
       console.error('Error logging out:', error);
@@ -57,7 +71,7 @@ export default function ProfileScreen({route}) {
       <View style={styles.header}>
         <Image source={require('../assets/5d709da8-cbe2-4ac7-a9f6-8f127662e86c.jpeg')} style={styles.profilePicture} />
         <View style={styles.profileInfo}>
-          <Text style={styles.nameText}>Mohammed Abdulwahab</Text>
+          <Text style={styles.nameText}>{profileName}</Text>
           <Text style={styles.titleText}>Software Developer</Text>
           <TouchableOpacity  onPress={handleLogout} style={styles.logoutButton}>
             <Image source={require('../assets/logout.png')} style={styles.logoutIcon} />

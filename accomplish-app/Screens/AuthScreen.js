@@ -58,8 +58,9 @@ const AuthScreen = ({ setIsLoggedIn }) => {
       if (!data) {
         throw new Error('Token not found in response data');
       }
-        const dddd = String(data.token);
-      await AsyncStorage.setItem('userToken', dddd);
+        const AuthToken = String(data.token);
+        await AsyncStorage.setItem('userInfo', JSON.stringify(data));
+        await AsyncStorage.setItem('userToken', AuthToken);
       setIsLoggedIn(true); 
 
   
