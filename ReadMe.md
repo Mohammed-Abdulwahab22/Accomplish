@@ -4,6 +4,9 @@
 
 Accomplish is a comprehensive app designed to streamline your tasks, empower teamwork, and unlock the power of global knowledge sharing. Built on the Expo platform, Accomplish offers a robust feature set to help you achieve more, together.
 
+![Alt Text](accomplish-app/assets/1.png)
+
+
 *Key Features*:
 
 **Effortless User Management**: Create a personalized account for seamless interaction within the app. Set up your username and password, and optionally customize your profile.
