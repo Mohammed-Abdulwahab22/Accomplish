@@ -18,8 +18,8 @@ Accomplish is a comprehensive app designed to streamline your tasks, empower tea
 Accomplish is a versatile and user-friendly solution for managing activities, fostering collaboration, and leveraging collective knowledge. Its intuitive interface, robust features, and global connectivity empower you to optimize your productivity, streamline teamwork, and connect with a vibrant community.
 
 
-![Alt Text](accomplish/accomplish-app/assets/1.png)
-![Alt Text](accomplish/accomplish-app/assets/2.png)
-![Alt Text](accomplish/accomplish-app/assets/4.png)
+![Alt Text](accomplish-app/assets/1.png)
+![Alt Text](accomplish-app/assets/2.png)
+![Alt Text](accomplish-app/assets/4.png)
 
 
