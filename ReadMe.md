@@ -1,9 +1,6 @@
 **Accomplish: Your All-in-One Productivity and Collaboration App**
-***This project showcases the frontend development for a mobile application built with Expo. While the backend code is included, it's currently not fully integrated for demonstration purposes.***
 
-This project is currently under development and is not yet stable. Contributions are welcome, but please be aware that things may change rapidly.
-
-
+**This project showcases the frontend development for a mobile application built with Expo. While the backend code is included, it's currently not fully integrated for demonstration purposes.**
 
 Accomplish is a comprehensive app designed to streamline your tasks, empower teamwork, and unlock the power of global knowledge sharing. Built on the Expo platform, Accomplish offers a robust feature set to help you achieve more, together.
 
