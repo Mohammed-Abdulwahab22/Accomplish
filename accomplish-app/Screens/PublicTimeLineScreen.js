@@ -1,21 +1,34 @@
-import React from 'react';
+import React, { useState, useEffect }  from 'react';
 import { StyleSheet, View, Text, FlatList, TouchableOpacity, Image } from 'react-native';
 import { Ionicons, Entypo } from '@expo/vector-icons';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { setPosts } from '../context/reducers/PublicTimLineReducer';
+import { addPost } from '../context/reducers/PublicTimLineReducer';
 
 export default function PublicTimeLineScreen() {
   const dispatch = useDispatch();
   const { posts } = useSelector(state => state.publicTimeLine);
-  
-  // const posts = [
-  //   { id: '1', title: 'Post 1', content: 'This is the content of post 1.', image: 'https://via.placeholder.com/150' },
-  //   { id: '2', title: 'Post 2', content: 'This is the content of post 2.', image: 'https://via.placeholder.com/150' },
-  //   { id: '3', title: 'Post 3', content: 'This is the content of post 3.', image: 'https://via.placeholder.com/150' },
-  // ];
 
- 
+  const creatPosts = async () => {
+    const response = await fetch('http://10.0.2.2:3000/api/posts' ,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ userId : '665f2d20620c45f94d003c94' , content : 'hello'  , likes : ['1'], comments : [{userId : '1' , content : 'hello'}]}),
+    }
+    );
+    
+    const data = await response.json();
+
+    dispatch(addPost(data));
+    console.log(data);
+  }
+
+
+
+  
   const renderItem = ({ item }) => (
     <TouchableOpacity style={[styles.postCard, { backgroundColor: '#B644DA' }]}>
       <Image source={{ uri: item.image }} style={styles.postImage} />
@@ -50,7 +63,7 @@ export default function PublicTimeLineScreen() {
         contentContainerStyle={styles.flatListContent}
       />
       </View>
-      <TouchableOpacity style={styles.postButton}>
+      <TouchableOpacity style={styles.postButton} onPress={creatPosts}>
           <Entypo name="pencil" size={35} color="white" />
       </TouchableOpacity>
     </View>
