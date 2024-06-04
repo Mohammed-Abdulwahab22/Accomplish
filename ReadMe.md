@@ -1,7 +1,5 @@
 **Accomplish: Your All-in-One Productivity and Collaboration App**
-![Work in Progress](https://img.shields.io/badge/status-WIP-orange)
-
-**Work in Progress**
+***This project showcases the frontend development for a mobile application built with Expo. While the backend code is included, it's currently not fully integrated for demonstration purposes.***
 
 This project is currently under development and is not yet stable. Contributions are welcome, but please be aware that things may change rapidly.
 
