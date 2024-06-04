@@ -6,8 +6,8 @@ Accomplish is a comprehensive app designed to streamline your tasks, empower tea
 
 
 ![Alt Text](accomplish-app/assets/1.png){ style="max-width: 400px;" }
-![Alt Text](accomplish-app/assets/2.png){ style="max-width: 400px;" }
-![Alt Text](accomplish-app/assets/4.png){ style="max-width: 400px;" }
+![Alt Text](accomplish-app/assets/2.png)
+![Alt Text](accomplish-app/assets/4.png)
 
 
 
@@ -24,25 +24,3 @@ Accomplish is a comprehensive app designed to streamline your tasks, empower tea
 
 
 Accomplish is a versatile and user-friendly solution for managing activities, fostering collaboration, and leveraging collective knowledge. Its intuitive interface, robust features, and global connectivity empower you to optimize your productivity, streamline teamwork, and connect with a vibrant community.
-
- ```
-
-- Replace `Alt Text` with a description of the image.
-- Replace `image-path` with the path to your image file.
-- Replace `400px` with your desired maximum width in pixels.
-
-**2. Using HTML Classes with CSS:**
-
-For more control over image size and styling, you can leverage HTML classes and CSS within your README. Here's how:
-
-**a. Create a CSS Class (Optional):**
-
-If you want to reuse the same styling for multiple images, you can define a CSS class in your README:
-
-```markdown
-<style>
-  .custom-image-size {
-    max-width: 400px;
-    /* Add other styling properties as needed (e.g., margin, padding) */
-  }
-</style>
